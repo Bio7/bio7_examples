@@ -1,0 +1,5 @@
+/*
+You can create a pause in the flow with this method.
+Time in milliseconds!
+*/
+Bio7Flow.setPause(3000);

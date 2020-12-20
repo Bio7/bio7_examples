@@ -1,0 +1,11 @@
+/*A simple example which produces data and stores it to an R file.*/
+
+RConnection c = RServe.getConnection();
+if (c!= null) {
+c.voidEval("A<-c(3000,6000,8000,300,4)");
+c.voidEval("B<-c(13000,16000,18000,13000,1400)");
+c.voidEval("save.image(file =\"D:/data.RData\", version = NULL, ascii = FALSE)");
+}
+else {
+	Bio7Dialog.message("No Rserve connection available !");
+}

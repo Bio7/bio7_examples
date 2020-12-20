@@ -1,0 +1,23 @@
+/* This Snippet shows how to call the compiled method from Bio7!*/
+
+// Get a reference to the class!
+if(Compiled.getEcoclass()!=null){
+	
+Class cla = Compiled.getEcoclass().getClass();
+try {
+	//Is the method available(By default it is) !
+	if (cla.getMethod("run", null) != null) {
+		Compiled.getEcoclass().run();
+	}
+
+} catch (SecurityException e) {
+	
+	
+} catch (NoSuchMethodException e) {
+	Bio7Dialog.message("No run method available!");
+	}
+}
+else{
+
+     Bio7Dialog.message("No compiled method available !");
+}

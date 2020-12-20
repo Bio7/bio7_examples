@@ -1,0 +1,3 @@
+/*A directory dialog!*/
+String directory=Bio7Dialog.directory("Select a directory");
+System.out.println(directory);

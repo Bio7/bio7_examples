@@ -1,0 +1,5 @@
+/*Opens the view with the specified id.*/
+
+Work.openView("org.eclipse.ui.views.PropertySheet");
+//Work.openmaxview("quadview"); for maximizing the view
+ 

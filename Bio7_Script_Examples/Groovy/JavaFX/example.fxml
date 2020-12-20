@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="508.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
+  <children>
+    <Button layoutX="7.0" layoutY="38.0" mnemonicParsing="false" onAction="#buttonPressed" prefHeight="60.0" prefWidth="108.00009999999747" text="Draw Chart">
+      <font>
+        <Font size="14.0" />
+      </font>
+    </Button>
+    <Text layoutX="27.0" layoutY="19.0" scaleX="1.0787410845592011" strokeType="OUTSIDE" strokeWidth="0.0" text="Bio7 GUI created with JavaFX embedded in SWT">
+      <font>
+        <Font name="System Bold" size="14.0" />
+      </font>
+    </Text>
+    <PieChart id="PieChart" fx:id="pie" minHeight="143.0" prefHeight="456.0" prefWidth="447.0" title="Chart Example" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="125.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="38.0" />
+  </children>
+</AnchorPane>

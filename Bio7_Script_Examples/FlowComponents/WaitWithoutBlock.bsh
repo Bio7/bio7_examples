@@ -1,0 +1,13 @@
+/*
+A non blocking dialog for information.
+Pauses the flow as long as not confirmed! 
+*/
+
+if(Bio7Dialog.getOS().equals("Windows")){
+Bio7Dialog.selection("Press to proceed !");
+}
+/*If the OS is Linux!*/
+else{
+Bio7Dialog.linuxSelection("Press to proceed !");	
+}
+

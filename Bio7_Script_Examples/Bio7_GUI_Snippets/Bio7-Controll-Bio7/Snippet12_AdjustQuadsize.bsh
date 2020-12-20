@@ -1,0 +1,2 @@
+// Adjust the quadsize of the quadgrid field!
+Field.setQuadSize(60);

@@ -1,0 +1,26 @@
+// Please enter your BeanShell code here!
+/* 
+This Snippet is an easy example how to get variables
+from R after a calculation!
+*/
+import ij.IJ;
+import ij.ImagePlus;
+import ij.WindowManager;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPDouble;
+
+RConnection c = RServe.getConnection();
+
+if (c != null) {
+
+	ImagePlus imp = WindowManager.getCurrentImage();
+   
+    
+	if (imp != null) {
+		ImageMethods.imageToR("plot", true, 0, null);
+	}
+	//Fill the list with matrices!
+	c.eval("try(matrixList[["+counting+"]]<-plot)");
+}
+
+counting++;//increase counting variable!

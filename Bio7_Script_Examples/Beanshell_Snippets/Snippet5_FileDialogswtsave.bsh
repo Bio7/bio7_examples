@@ -1,0 +1,32 @@
+/*This is an example how to use swt dialogs etc.*/
+
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.SWT;
+
+//Wrap to execute correctly !
+
+Display display = Bio7Action.getBio7Display();
+display.syncExec(new Runnable() {
+
+	public void run() {
+		Shell shell = new Shell(display);
+		FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+		dialog.setFilterNames(new String[] { "Bio7 Files", "All Files (*.*)" });
+		dialog.setFilterExtensions(new String[] { "*.txt", "*.*" }); // Windows
+
+		dialog.setFilterPath("c:\\"); // Windows path
+		dialog.setFileName("file.txt");
+		System.out.println("Save to: " + dialog.open());
+
+		
+	}
+});

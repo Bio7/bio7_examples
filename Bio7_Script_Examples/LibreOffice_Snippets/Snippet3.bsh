@@ -1,0 +1,23 @@
+/*
+This examples creates a new spread and transfers data to the sheet.
+An open spread is required. 
+If a spread is available you don't need to open a new one!
+*/
+LibreOffice.openSpread();// Open a new spread
+
+String name="Customsheet";
+LibreOffice.newSheet(name);// Insert a new sheet!
+
+String []head={"A","B","C","D"};
+double[][]values=new double[head.length][40];// Defined 4 columns!
+
+for (int i = 0; i < values.length; i++) {
+	for (int u = 0; u < values[0].length; u++) { 
+		
+		values[i][u]=Math.random()*150;
+		
+          }
+     }
+
+LibreOffice.sheetInsertValues(values,head); // Insert all!
+LibreOffice.activateSheet(name);// Activate and bring to front!

@@ -1,0 +1,5 @@
+/*This example demonstrates how to open a new LibreOffice spreadsheet.*/
+
+LibreOffice.openSpread();// Open a new spread !
+
+System.out.println("finished");

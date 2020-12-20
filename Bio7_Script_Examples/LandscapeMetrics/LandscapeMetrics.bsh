@@ -1,0 +1,57 @@
+/*In this example some Landscape metrics are measured and printed!
+Results are from measurements of the selected state in the grid!*/
+
+/*Create a new object for measurement!*/
+LandscapeMetrics m=new LandscapeMetrics();
+
+/*Reset measurements if necessary!*/
+m.reset();
+
+/*Select the state (e.g. Plant1)!*/
+int type=1;
+
+/*Measure with the given rule of neighbourhood!*/
+m.doPatchStatistics(4);
+
+/*Print the amount of patches of the given type*/
+System.out.println("Amount Patchtype "+type+" = "+m.getAmountPatchType(type));
+
+/*Some measurements!*/
+int[] size=m.getPatchesSize(type);
+double[] peri=m.getPatchesPerimeter(type);
+double[] edge=m.getEdge(type,0,4);
+double[] frac=m.getFractalDimension(type);
+
+/*Print the results!*/
+for (int i = 0; i < size.length; i++) {
+	System.out.println("Size: "+size[i]+" perimeter: "+peri[i]+" edges: "+edge[i]+"frac: "+frac[i]);
+	
+}
+
+double[] dist=m.getPatchesDistance(type);
+
+for (int z = 0; z < dist.length; z++) {
+	double di = dist[z];
+	System.out.println("Distance: " + di);
+}
+/*Some measurements!*/
+int total=m.getTotalAmount(type);
+int totalArea=m.getTotalArea();
+double percentField= m.getPercentofField(type); 
+
+/*Print the results!*/
+System.out.println("number: "+ total+" TotalArea: "+totalArea+" percentage: " +percentField);
+
+System.out.println("patch density: "+m.getPatchDensity(type));
+
+System.out.println("Average Peri-area ratio: "+m.getAveragePerimeterAreaRatio(type));
+
+double[]periarea=m.getPerimeterAreaRatio(type);
+
+/*Print all values again!*/
+for (int z = 0; z < periarea.length; z++) {
+	double di = periarea[z];
+	System.out.println("perimeter_area: " + di);
+}
+
+

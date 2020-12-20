@@ -1,0 +1,5 @@
+/*With this Snippet you can create or remove states!*/
+for (int i = 1; i < 3; i++) {
+	Bio7State.createState(Integer.toString(i));
+   //Bio7State.removeState(Integer.toString(i));
+}

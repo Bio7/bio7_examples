@@ -1,0 +1,6 @@
+/*
+This Snippet can be used as a template for saving files 
+when creating export scripts.
+*/
+String file=Bio7Dialog.saveFile();
+System.out.println(file);

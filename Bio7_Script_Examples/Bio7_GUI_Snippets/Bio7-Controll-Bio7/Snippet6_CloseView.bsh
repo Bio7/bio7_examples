@@ -1,0 +1,4 @@
+/*Closes the view with the specified id.*/
+Work.closeView("com.eco.bio7.thumbnails");
+ 
+ 

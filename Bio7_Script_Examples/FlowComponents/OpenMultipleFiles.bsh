@@ -1,0 +1,9 @@
+/*
+This is a Bio7 API example for the file selection of multiple files!
+*/
+
+String []files=Bio7Dialog.openMultipleFiles();
+
+for (int i = 0; i < files.length; i++) {
+	System.out.println(Bio7Dialog.getCurrentPath()+files[i]);
+}

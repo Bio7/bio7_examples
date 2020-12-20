@@ -1,0 +1,7 @@
+/*
+First set this dialog and connect it to a decision component.
+Set the connections of the flow behind a decision to true or false. 
+The dialog then follows the connection according to the "Yes" and "No" option.
+For the Dialog:Yes=true, No=false.
+*/
+Bio7Dialog.decision("Do you want to make a break ?");

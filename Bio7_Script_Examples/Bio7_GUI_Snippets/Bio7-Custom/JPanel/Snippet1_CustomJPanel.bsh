@@ -1,0 +1,16 @@
+/*An example for an embedded JPanel in a custom view of Bio7.*/
+
+JPanel jp = new JPanel();
+
+jp.add(new JLabel("Date:"));
+Date today = new Date();
+JSpinner s = new JSpinner(new SpinnerDateModel(today,null,null,Calendar.MONTH));
+JSpinner.DateEditor de = new JSpinner.DateEditor(s, "MM/yy");
+s.setEditor(de);
+jp.add(s);
+
+/* Here we open the custom view with the embedded JPanel.
+The second argument is the title of the tab !
+*/
+CustomView view=new CustomView();
+view.setPanel(jp,"custompanel");

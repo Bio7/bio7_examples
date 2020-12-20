@@ -1,0 +1,6 @@
+/*
+This Snippet can be used as a template for opening files 
+when creating import scripts.
+*/
+String file=Bio7Dialog.openFile();
+System.out.println(file);

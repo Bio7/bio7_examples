@@ -1,0 +1,4 @@
+/*Only for use inside the flow ! 
+If a flow has been cancelled this method will be cancelled too !
+Makes the Bio7 calculation thread run to the specified count.*/
+Bio7Flow.runTo(10);

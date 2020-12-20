@@ -1,0 +1,49 @@
+/*
+An example for a custom swt composite (randomizes the field) 
+inside Bio7 as a tab!
+*/
+
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+
+CustomView view=new CustomView();
+Display dis = CustomView.getDisplay();
+
+dis.syncExec(new Runnable() {
+	public void run() {
+
+		Composite parent = view.getComposite("custompanel");
+		Button button = new Button(parent, SWT.PUSH);
+		button.setBounds(40, 50, 50, 20);
+		button.setText("Press Me");
+
+		Text text = new Text(parent, SWT.BORDER);
+		text.setBounds(100, 50, 70, 20);
+
+		parent.layout(true);
+
+		button.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent event) {
+				Field.chance();
+				text.setText("Randomized in Quadview");
+
+			}
+
+			public void widgetDefaultSelected(SelectionEvent event) {
+				
+			}
+		});
+
+	}
+});
+
+ 

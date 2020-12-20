@@ -1,0 +1,10 @@
+/*This example checks if a library is available in R.*/
+if (RServe.getConnection() != null) {
+	if (!RServe.getConnection().eval("require(spe)").isTrue()[0]) {
+
+		Bio7Dialog.message("Cannot load 'spe' package!");
+	}
+}
+else {
+	Bio7Dialog.message("No Rserve connection available!");
+}

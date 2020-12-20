@@ -1,0 +1,2 @@
+/*Opens a connection to OpenOffice.*/
+Bio7Action.callOpenOffice();

@@ -1,0 +1,6 @@
+/*
+Choose a file with the Bio7 Api!
+*/
+String file=Bio7Dialog.openFile();
+
+System.out.println(file);

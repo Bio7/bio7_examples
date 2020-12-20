@@ -1,0 +1,2 @@
+/*Opens and maximizes the view with the specified id.*/
+Work.openMaxView("com.eco.bio7.thumbnails");

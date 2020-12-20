@@ -1,0 +1,22 @@
+/*
+With this methods you can customize the counts and labels in the Control view.
+If you invoke the methods the time will be set to o.
+*/
+
+/*Define the new scale !*/
+String []m={"a","b","c"};
+
+/*Important to set the indices!*/
+int [] mn={0,1,2};
+
+/*Set modulo according to the new scale! 
+(After which timesteps the index is resetted to o*/
+Time.setModtime(3);
+
+/*Now we set the new scale!*/
+Time.setMonth(m);
+Time.setMonthnumber(mn);
+
+/*And we change the two labels!*/
+Time.changeYearLabel("seconds:");
+Time.changeMonthLabel("minutes:");

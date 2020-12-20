@@ -1,0 +1,38 @@
+/*This example shows how to select an area in ImageJ 
+and set states parallel to the selection in the quadgrid.
+The coordinates of the selection determine the area in the quadgrid.
+Please scale the quadgrid for a visible result and select a state or plant. 
+Open also a picture before you start and select!*/
+
+import ij.IJ;
+import ij.ImageJ;
+import ij.ImagePlus;
+import ij.WindowManager;
+import ij.gui.Roi;
+import java.awt.Polygon;
+
+
+				
+Roi roi = WindowManager.getCurrentImage().getRoi();
+				
+java.awt.Rectangle [][]rec=Field.getQuads();			
+Polygon po = roi.getPolygon();
+	
+for (int i = 0; i < Field.getHeight(); i++) {
+	for (int u = 0; u < Field.getWidth(); u++) {
+		if (po.contains(rec[i][u])) {
+			/*Here we set the state to 1*/
+			Field.setState(u,i,1);
+
+		}
+		else{
+			
+		}
+	}
+}
+PointPanel.doPaint();					
+
+	
+	
+
+

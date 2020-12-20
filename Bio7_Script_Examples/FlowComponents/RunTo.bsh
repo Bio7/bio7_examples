@@ -1,0 +1,7 @@
+/*
+Only for use inside a flow! 
+If a flow has been canceled this method will be canceled too!
+Makes the Bio7 calculation thread run to the specified count.
+Reset with the "Counter Reset" action in the Bio7 main toolbar!*/
+
+Bio7Flow.runTo(100);

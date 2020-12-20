@@ -1,0 +1,24 @@
+/*
+This examples creates a new spread and transfers data to the sheet.
+Also the values are marked with the given x,y coordinates.
+*/
+
+LibreOffice.openSpread();// Open a new spread!
+String name="Customheet2";
+LibreOffice.newSheet(name);
+String []head={"A","B","C","D"};
+double[][]values=new double[head.length][40];
+// 0,0 is the top-left number after the header
+int []y={0,2,3,1,1};// This coordinates in the sheet will be marked red!
+int []x={0,2,6,1,2};
+
+for (int i = 0; i < values.length; i++) {
+	for (int u = 0; u < values[0].length; u++) { 
+		
+		values[i][u]=Math.random()*150;
+		
+          }
+     }
+
+LibreOffice.sheetInsertValuesMark(values,head,x,y); // Inserts all and marks the values!
+LibreOffice.activateSheet(name);// Activates the sheet and brings it to front!

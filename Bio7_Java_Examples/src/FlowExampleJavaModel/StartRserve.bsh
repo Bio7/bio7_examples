@@ -1,0 +1,4 @@
+/*With this action you can start or stop the RServe application !*/
+if(RServe.isConnected()==false){
+Bio7Action.callRserve();
+}

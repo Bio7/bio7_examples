@@ -1,0 +1,3 @@
+/*With this action you can start or stop the calculation thread!*/
+Bio7Action.startCalculation();
+//Bio7Action.stopCalculation();

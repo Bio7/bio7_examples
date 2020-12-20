@@ -1,0 +1,2 @@
+/*This is how static java imports work in BeanShell!*/
+static import com.eco.bio7.discrete.Field.*;

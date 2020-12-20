@@ -1,0 +1,3 @@
+
+Field.setState(x,y,(int)(Math.random()*Bio7State.getStateSize()));
+x++;

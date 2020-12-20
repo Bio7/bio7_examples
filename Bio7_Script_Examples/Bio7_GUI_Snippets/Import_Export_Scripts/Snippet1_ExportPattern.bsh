@@ -1,0 +1,21 @@
+/*A script for exporting a pattern of the(as an example)quadgrid field.*/
+
+File pict = new File(Bio7Dialog.saveFile());
+
+try {
+	DataOutputStream out = new DataOutputStream(new BufferedOutputStream(
+		new FileOutputStream(pict + ".pattern")));
+	for (int y = 0; y < Field.getHeight(); y++) {
+		for (int x = 0; x < Field.getWidth(); x++) {
+			out.writeChars(Integer.toString(Field.getState(x,y)) + ",");
+		}
+		out.writeChars("\n");
+	}
+	out.close();
+
+}
+
+catch (FileNotFoundException e) {
+} 
+catch (IOException e) {
+}

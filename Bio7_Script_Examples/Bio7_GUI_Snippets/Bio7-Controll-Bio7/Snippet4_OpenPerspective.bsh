@@ -1,0 +1,6 @@
+/*Opens the perspective with the specified id.*/
+Work.openPerspective("com.eco.bio7.perspective_image");
+
+/*A saved custom perspective is available with it's name as the id!
+e.g.: 
+Work.openPerspective("Custom");*/

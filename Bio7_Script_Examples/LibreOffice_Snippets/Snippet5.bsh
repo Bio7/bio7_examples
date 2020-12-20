@@ -1,0 +1,10 @@
+/*
+This example shows how to get all sheets by name. 
+Opened spreadsheets are required for this operation.
+*/
+
+String []sheets=LibreOffice.getSheets();
+
+for (int i = 0; i < sheets.length; i++) {
+	System.out.println(sheets[i]);
+}

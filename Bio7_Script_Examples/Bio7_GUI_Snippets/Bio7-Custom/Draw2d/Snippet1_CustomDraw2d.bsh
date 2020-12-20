@@ -1,0 +1,42 @@
+/* 
+A custom view with Draw2d!
+To add components they must be embedded in a Display call!
+*/
+
+import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Ellipse;
+import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.MarginBorder;
+import org.eclipse.draw2d.Shape;
+import org.eclipse.draw2d.StackLayout;
+
+
+
+
+import org.eclipse.swt.widgets.Display;
+
+CustomView view=new CustomView();
+
+Display dis = view.getDisplay();
+
+dis.syncExec(new Runnable() {
+	
+	public void run() {
+		LightweightSystem lws = view.getDraw2d("custompanel");
+		IFigure panel = new Figure();
+		lws.setContents(panel);
+		StackLayout layout = new StackLayout();
+
+		panel.setLayoutManager(layout);
+		Shape ellipse = new Ellipse();
+		ellipse.setBackgroundColor(ColorConstants.black);
+
+		panel.add(ellipse);
+
+	}
+});
+
+
+      

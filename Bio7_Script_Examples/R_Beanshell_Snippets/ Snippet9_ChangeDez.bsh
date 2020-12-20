@@ -1,0 +1,10 @@
+/*Change the decimal seperator for values ("," instead of ".")!*/
+
+if (RServe.getConnection() != null) {
+	RServe.getConnection().eval("options(OutDec = \",\")");
+	
+} 
+else {
+	RServe.isAliveDialog();
+
+}

@@ -1,0 +1,9 @@
+
+int[]state={0,1};
+String one="StateOne_"+repetition;
+String two="StateTwo_"+repetition;
+String []title={one,two};
+/*We want to add Cc and Pp for Analysis !*/
+CountValues.transferCountsToR("",state,title);
+/*We transfer values to R !*/
+repetition++; //we increase the values

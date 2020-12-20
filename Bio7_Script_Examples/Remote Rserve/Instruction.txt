@@ -1,0 +1,47 @@
+!Description for a remote R running on a Linux computer
+
+Move Rserv.conf to Linux System folder /etc  (/etc/Rserv.conf)
+The file references the password file (pass.txt) which can be placed
+in a custom location. Please change this file with the correct
+file location on your computer!
+
+Start R and then load the Rserve library
+#######R commands start########
+library(Rserve);
+Rserve();
+#######R commands end##########
+
+Under the R preferences of Bio7 enable the remote connection with 
+the correct ip-adress, user and password information!!!
+
+Start Rserve without a native connection (not default - please change in the Rserve preferences!)
+
+If you want to work with the local connection please stop and close the remote
+connection before you start the local connection!
+
+Please consider that you are working on a remote maschine. The open and save
+dialogs will not work but you can save workspaces etc. with the file paths
+of the remote computer.
+
+Generally the shell, the editor and image analysis tools will work with the remote
+connection
+
+If you use the flow you can use Groovy or BeanShell scripts to evaluate
+R scripts since. Dragged Rscripts will use the local file path which causes errors!
+
+If you use the print method the results will be shown on the remote shell!
+e.g.: 
+#######R commands start########
+result<-runif(1:100);
+print(result);
+#######R commands end##########
+
+If a network connection is not available the job will run for a longer time since
+it tries to find a connection to the remote computer or server!
+You can stop this process as usual but this action will be recognized at the next
+available opportunity!
+
+Troubleshooting:
+- If you can't get a connection please control if not to many Rserve processes are running
+  (Rserve-bin.so)
+- Please verify the entries (user, pass, Rserv.conf, pass.txt) on both sides etc.

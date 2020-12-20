@@ -1,0 +1,6 @@
+/*
+This method adjusts the field size of the grids!
+Sizes beyond the slider maximum (>1000) are possible!!!
+*/
+
+Field.setSize(100, 100);

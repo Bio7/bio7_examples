@@ -1,0 +1,14 @@
+// Please enter your BeanShell code here!
+
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPDouble;
+
+
+
+int counting=1;
+
+RConnection c = RServe.getConnection();
+
+if (c != null) {
+	c.eval("matrixList<-list()");
+}

@@ -1,0 +1,35 @@
+/*
+In this example an R file is executed. The results can be printed again with the
+help of BeanShell!
+This enables the possibility to call more complex scripts in R without the need
+to convert it to a BeanShell call!
+You can, e.g. place both scripts in the scripts menu were the BeanShell script
+is calling the R Script for a more complex task. 
+*/
+
+if (RServe.getConnection() != null) {
+	/*Paths are available in the FileRoot class!!*/
+	String fileroot = FileRoot.getFileRoot();
+
+	/*Get the path and convert it for R (Windows)*/
+	String f = fileroot
+		+ "/Bio7_Script_Examples/R_Beanshell_Snippets/Execute_Source/script.R";
+
+	/*We have to replace "/" to "\\" !
+	For the use in Linux comment the following line out!*/
+	f = f.replace("/", "\\");
+
+	/*Transfer path to R !*/
+	RServe.getConnection().assign("fileroot", f);
+
+	/*Call the script !*/
+	RServe.getConnection().eval("try(source(fileroot))");
+
+	System.out.println("The result is:");
+	/*Print the result to the console!*/
+	RServe.print("result");
+} 
+
+else {
+	RServe.isAliveDialog();
+}

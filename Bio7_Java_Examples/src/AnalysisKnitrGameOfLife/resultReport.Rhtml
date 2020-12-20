@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<title>A minimal knitr example in HTML</title>
+	</head>
+	<body contenteditable="true">
+		<p style="text-align: center;"><font face="Tahoma" size="6"><b><u>Bio7 1.7 Knitr Example</u></b></font></p>
+		<p style="text-align: center;"><font face="Tahoma"><b>This example demonstrates the use of Knitr inside a flow to generate a simulation report.&nbsp;</b></font></p>
+		<p style="text-align: center;"><font face="Tahoma"><b>Images from ImageJ can be transferred, too.<font size="6">&nbsp;</font></b></font></p>
+		<!--begin.rcode
+			opts_chunk$set(dpi=72, fig.width=7, fig.height=7)
+			end.rcode-->
+		<!--begin.rcode fig.align='center'
+			for(i in 1:length(matrixList)){
+			image(matrixList[[i]],useRaster=TRUE, col = gray.colors(2))
+			title(paste("Iterations: ",i*10))
+			}
+			end.rcode-->
+	</body>
+</html>

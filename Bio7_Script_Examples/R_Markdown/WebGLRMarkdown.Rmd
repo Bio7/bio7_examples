@@ -1,0 +1,15 @@
+---
+output: html_document
+---
+
+```{r testgl}
+#Creates a 3d plot in the *.html file using the rglwidget function.
+library(rgl)
+library(rglwidget)
+x <- sort(rnorm(1000))
+y <- rnorm(1000)
+z <- rnorm(1000) + atan2(x,y)
+plot3d(x, y, z, col=rainbow(1000))
+rglwidget()
+rgl.close()
+```

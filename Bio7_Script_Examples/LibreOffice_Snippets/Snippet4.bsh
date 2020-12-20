@@ -1,0 +1,23 @@
+/*
+This Snippet gets the String values of the area.
+Please name the sheet and the area correctly!
+Parse the data correctly to a double or a String!
+Data is read from left to right!
+*/
+
+String area = "$Sheet1.$A$1:$B$10";
+//New, works, too ->String area = "Sheet1.A1:B10";
+LibreOffice.getSheetValues(area);
+String[][] sheetdata = LibreOffice.getSheetdata();
+// We transfer the data to the LibreOffice.sheetdata array
+for (int i = 0; i < sheetdata.length; i++) {
+	for (int u = 0; u < sheetdata[0].length; u++) {
+		try {
+			double number = Double.parseDouble(sheetdata[i][u]);
+			System.out.println("data: " + number);
+		} catch (NumberFormatException e) {
+			System.out.println("String: " + sheetdata[i][u]);
+		}
+
+	}
+}

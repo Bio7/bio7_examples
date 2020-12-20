@@ -1,0 +1,50 @@
+/*
+A Rserve benchmark test with Java and BeanShell!
+*/
+//import com.eco.bio7.rbridge.RState;
+
+if(RServe.isAliveDialog()){
+if(RState.isBusy()==false){	
+RConnection c=RServe.getConnection();
+System.out.println("1000000 random numbers in R:");
+RServe.print("system.time(a<-runif(1000000)*10000)");
+System.out.println("The call from Java:");
+long time = System.currentTimeMillis();
+c.eval("runif(1000000)*10000");
+double timeOut = (double)(System.currentTimeMillis() - time)/1000;
+System.out.println("Time call Java: (seconds) " + timeOut);
+
+time = System.currentTimeMillis();
+double []random = (double[]) c.eval("runif(1000000)*10000").asDoubles();
+
+//double random = (double) c.eval("random").asDouble();
+timeOut = (double)(System.currentTimeMillis() - time)/1000;
+System.out.println("Time call+data transfer to Java: (seconds) " + timeOut);
+
+System.out.println("Pure data transfer 10000000 numbers:");
+long time = System.currentTimeMillis();
+double []fibonacci = (double[]) c.eval("a").asDoubles();
+double timeOut = (double)(System.currentTimeMillis() - time)/1000;
+System.out.println("Time transfer Java: (seconds) " + timeOut);
+c.eval("remove(a)");
+
+
+RServe.getConnection().eval("a <- 0");
+RServe.getConnection().eval("b <- 0");
+RServe.getConnection().eval("phi <- 1.6180339887498949");
+RServe.getConnection().eval("a <- floor(runif(750000)*1000)");
+RServe.getConnection().eval("timing <- system.time(b <- (phi^a - (-phi)^(-a))/sqrt(5))");
+System.out.println("750000 Fibonacci Numbers in R: ");
+RServe.print("timing");
+
+time = System.currentTimeMillis();
+RServe.getConnection().eval("b <- (phi^a - (-phi)^(-a))/sqrt(5)");
+double []fibonacci = (double[]) c.eval("b").asDoubles();
+timeOut = (double)(System.currentTimeMillis() - time)/1000;
+System.out.println("Time call+data transfer to Java: (seconds) " + timeOut);
+c.eval("remove(a);remove(b);remove(phi);remove(timing)");
+}
+else{
+	System.out.println("RServer is busy!");
+}
+}

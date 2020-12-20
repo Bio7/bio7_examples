@@ -1,0 +1,3 @@
+/*A non blocking dialog for information.
+Pauses the flow as long as not confirmed ! */
+Bio7Dialog.selection("Press to proceed !");

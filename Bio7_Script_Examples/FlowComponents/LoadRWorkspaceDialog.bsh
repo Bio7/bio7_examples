@@ -1,0 +1,30 @@
+/*
+This Snippet can be used as a template for opening files
+This example opens a R workspace.
+ */
+
+
+if (RServe.getConnection() != null) {
+
+	String file = Bio7Dialog.openFile();
+
+	String selected = file;
+	//For Windows!
+	selected = selected.replace("\\", "\\\\");
+	String load = "load(file =\"" + selected + "\")";
+	try {
+		
+		RServe.getConnection().eval("try(" + load + ")");
+
+	} catch (RSrvException e) {
+
+		System.out.println(e.getRequestErrorDescription());
+	}
+
+}
+
+else {
+	Bio7Dialog.message("No Rserve connection available !");
+}
+
+	

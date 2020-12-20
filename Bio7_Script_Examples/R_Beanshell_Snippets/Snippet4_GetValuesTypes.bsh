@@ -1,0 +1,46 @@
+/*
+Transfer different data types from R to Beanshell or Java!
+*/
+
+import org.rosuda.REngine.REXPLogical;
+
+RConnection c = RServe.getConnection();
+if (RServe.getConnection() != null) {
+	c.eval("A<-3");
+	/*Get the variable as double! */
+	double b = (double) c.eval("A").asDouble();
+	System.out.println(b);
+	RServe.print("A"); //Print variables to console.
+
+	/*We get a String from R!*/
+	c.eval("H<-'Hallo'");
+	String st = (String) c.eval("H").asString();
+	System.out.println(st);
+	
+    /*A boolean value!*/
+	c.eval("bo<-TRUE");
+	REXPLogical bol = c.eval("bo");
+    boolean[]bo=bol.isTrue();
+	System.out.println(bo[0]);
+    
+	c.eval("a1<- c(10.456,20,15,43,76,41,25,46)");
+	c.eval("a2<- c(15,29,25,43,36,41,25,46)");
+	c.eval("a3<- c(15,20,95,43,76,71,25,36)");
+	c.eval("frame<-data.frame(a1,a2,a3)");//Create a data frame!
+	c.eval("matrix<-as.matrix(frame)");// Convert to a matrix!
+	c.eval("matrix<-t(matrix)");// Transpose!
+    /*We transfer a matrix as a 2d-array to Java!*/
+	double[][] frame = c.eval("matrix").asDoubleMatrix();
+	for (int i = 0; i < frame.length; i++) {
+		for (int u = 0; u < frame[0].length; u++) {
+
+			System.out.println(frame[i][u]);
+		}
+		System.out.println("");
+	}
+
+} 
+else {
+
+	Bio7Dialog.message("No Rserve connection available!");
+}

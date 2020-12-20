@@ -1,0 +1,68 @@
+/*
+This is an example how to make a Java GUI for R methods.
+In this example a summary of selected, available variables is displayed. */
+
+import org.rosuda.REngine.REXP;
+
+//We proof if RServe is running!
+if(RServe.isAliveDialog()){
+//optional method: isAlive() -> without dialog!
+	
+
+RConnection connection = RServe.getConnection();	
+//Get all variables from the workspace!
+connection.eval("remove(variables)");
+connection.eval("remove(last.warning)");
+
+// Must add a placeholder before method asVector() works correctly!???
+connection.eval("empty<-0");
+
+// List all variables in workspace!
+connection.eval("variables<-ls()");
+
+REXP x = connection.eval("variables");
+String[] v=x.asStrings();
+JPanel panel = new JPanel();
+panel.setLayout( null );
+JLabel label=new JLabel();
+label.setBounds( 80, 55, 260, 20 );
+label.setText("Please select a Variable");
+panel.add(label);
+        
+// We create a combobox!
+
+JComboBox combo = new JComboBox();
+public void itemStateChanged(ItemEvent event) {
+	if (event.getSource() == combo
+		&& event.getStateChange() == ItemEvent.SELECTED) {
+		// Evaluate and print it to the console!
+
+		RServe.print("summary(" + combo.getSelectedItem() + ")");
+
+	}
+}
+// The listener for the changes!
+combo.addItemListener(this);
+combo.setBounds( 20, 35, 260, 20 );
+panel.add( combo );
+	
+if (v != null && v.length >= 0) {
+
+	for (int i = 0; i < v.length; i++) {
+
+		combo.addItem(v[i]);
+		combo.setEditable(true);
+
+	}
+
+}	
+				
+else{
+	 combo.addItem( "No variables available !" );
+	 combo.setEditable( false );    
+	}	
+	// Add it to the custom panel!
+	CustomView view=new CustomView();
+	view.setPanel(panel,"R-function");
+	
+}

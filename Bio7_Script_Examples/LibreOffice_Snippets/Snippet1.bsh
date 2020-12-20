@@ -1,0 +1,15 @@
+/*
+Get BeanShell data from an LibreOffice CalcSheet after a menu selection. 
+LibreOffice->Spreadsheet-Values to BeanShell!*/
+//double [][]sheet=LibreOffice.getSheetdata();
+
+if (sheetdata!=null){
+for (int i = 0; i < sheetdata.length; i++) {
+	for (int u = 0; u < sheetdata[0].length; u++) { 
+		System.out.println(sheetdata[i][u]);
+          }
+     }
+}
+else{
+System.out.println("No values !");	
+}
