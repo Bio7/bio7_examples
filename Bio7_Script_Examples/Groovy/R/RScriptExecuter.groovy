@@ -1,4 +1,4 @@
-/*An example to execute R code in a job and plotting support!*/
+/*An example to execute R code interactive with SWT dialogs in a job and instant plotting support!*/
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -59,29 +59,31 @@ new ExecuteRScript(new RScriptExecuter() {
 		}
 		/*Visualizing of progress in the Bio7 job!*/
 		monitor.worked(1);
-		
+
 		decision2 = Bio7Dialog.decision("Enter data and plot data?");
 		if (decision2) {
+			
+			Bio7Action.clearConsole();
 			Bio7Dialog.message("Please enter the data in the Bio7 console or R-Shell!");
 			con.eval(scanCommand);
 			con.eval(boxplotCommand);
+			/*Display the plot instantly instead to plot all at the end!*/
 			RServeUtil.displayPlotEvent();
+			decision3 = Bio7Dialog.decision("Plot data as histogram, too?");
+			if (decision3) {
+				con.eval(histCommand);
+				RServeUtil.displayPlotEvent();
+
+			}
 		}
-		monitor.worked(2);
-		decision3 = Bio7Dialog.decision("Plot data as histogram?");
-		if (decision3) {
-			con.eval(histCommand);
-			RServeUtil.displayPlotEvent();
-			
-		}
-		monitor.worked(3);
+		monitor.worked(1);
 		decision4 = Bio7Dialog.decision("Plot an loop example as a stack?");
 		if (decision4) {
 			con.eval(loopPlotCommand);
 			RServeUtil.displayPlotEvent();
-			
+
 		}
-		monitor.worked(4);
+		monitor.worked(1);
 		decision5 = Bio7Dialog.decision("Plot an loop example as individual plots?");
 		if (decision5) {
 			for (int i = 0; i < 5; i++) {
@@ -89,7 +91,6 @@ new ExecuteRScript(new RScriptExecuter() {
 				RServeUtil.displayPlotEvent();
 			}
 		}
-		monitor.worked(5);
+		monitor.worked(1);
 	}
-
-}, 5);
+}, 4);
