@@ -28,7 +28,7 @@ public class RExecAbstractClassAction {
 				}
 			}
 
-		},2);
+		},1);
 
 	}
     
