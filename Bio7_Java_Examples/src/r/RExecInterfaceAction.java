@@ -19,7 +19,6 @@ public class RExecInterfaceAction implements RScriptExecuterInterface {
 		 */
 		new ExecuteRScript(this, 1);
 	}
-
 	/* We declare the interface method! */
 	public void evaluate(RConnection con, IProgressMonitor monitor) {
 
@@ -31,7 +30,6 @@ public class RExecInterfaceAction implements RScriptExecuterInterface {
 		}
 
 	}
-
 	public static void main(String[] args) {
 		// Main method to avoid warning!
 	}

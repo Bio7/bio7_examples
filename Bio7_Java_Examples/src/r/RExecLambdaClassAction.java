@@ -24,8 +24,7 @@ public class RExecLambdaClassAction {
 				monitor.worked(1);			
 		}, 1);
 
-	}
-    
+	}   
 	public static void main(String[] args) {
 		
 	}
