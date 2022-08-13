@@ -1,3 +1,36 @@
+/*MIT License
+
+Copyright (c) 2022 xanthium-enterprises
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/*
+Adapted Serial example from the https://github.com/xanthium-enterprises Github website using JavaFX panel for a simple GUI:
+Adapted read and write example from: https://github.com/xanthium-enterprises/Java-Serial-Port-Communication-Arduino-ATmega328P subsite
+Please install the Arduino IDE for the driver installation of the ports!
+In addition select the right port of your OS if necessary.
+Serial library used: https://github.com/Fazecast/jSerialComm
+For the execution Eclipse jobs were added to get or send values to avoid a blocking GUI!
+Please close the serial port in the GUI (or simply close the view which also closes the port) before you recompile the class!
+*/
+
 package arduino;
 
 import java.io.UnsupportedEncodingException;
@@ -12,15 +45,6 @@ import com.eco.bio7.collection.CustomView;
 import com.fazecast.jSerialComm.SerialPort;
 import javafx.event.ActionEvent;
 
-/*
-Adapted Serial example from the https://github.com/xanthium-enterprises Github website using JavaFX panel for a simple GUI:
-Adapted read and write example from: https://github.com/xanthium-enterprises/Java-Serial-Port-Communication-Arduino-ATmega328P subsite
-Please install the Arduino IDE for the driver installation of the ports!
-In addition select the right port of your OS if necessary.
-Serial library used: https://github.com/Fazecast/jSerialComm
-For the execution Eclipse jobs were added to get or send values to avoid a blocking GUI!
-Please close the serial port in the GUI (or simply close the view which also closes the port) before you recompile the class!
-*/
 import javafx.fxml.FXML;
 
 public class ArduinoSerial extends com.eco.bio7.compile.Model {
