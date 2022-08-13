@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#startIt" prefHeight="59.0" prefWidth="128.0" text="Start">
+    <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#startIt" prefHeight="59.0" prefWidth="128.0" text="Open Port">
       <font>
         <Font size="22.0" fx:id="x1" />
       </font>
     </Button>
-    <Button font="$x1" layoutX="172.0" layoutY="14.0" mnemonicParsing="false" onAction="#stopit" prefHeight="59.0" prefWidth="128.0" text="Stop" />
+    <Button font="$x1" layoutX="172.0" layoutY="14.0" mnemonicParsing="false" onAction="#stopit" prefHeight="59.0" prefWidth="128.0" text="Close Port" />
+      <Button layoutX="172.0" layoutY="99.0" mnemonicParsing="false" onAction="#sendIt" prefHeight="59.0" prefWidth="128.0" text="Send">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Button>
+      <Button layoutX="14.0" layoutY="99.0" mnemonicParsing="false" onAction="#receiveIt" prefHeight="59.0" prefWidth="128.0" text="Receive">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Button>
+      <Button layoutX="14.0" layoutY="175.0" mnemonicParsing="false" onAction="#stopActions" prefHeight="59.0" prefWidth="288.0" text="Stop">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Button>
+      <Separator layoutX="17.0" layoutY="86.0" prefHeight="3.0" prefWidth="282.0" />
   </children>
 </AnchorPane>
