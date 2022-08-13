@@ -18,7 +18,6 @@ Please install the Arduino IDE for the driver installation of the ports!
 In addition select the right port of your OS if necessary.
 Serial library used: https://github.com/Fazecast/jSerialComm
 For the execution Eclipse jobs were added to get or send values to avoid a blocking GUI!
-
 Please close the serial port in the GUI (or simply close the view which also closes the port) before you recompile the class!
 */
 import javafx.fxml.FXML;
