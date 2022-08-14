@@ -29,6 +29,8 @@ In addition select the right port of your OS if necessary.
 Serial library used: https://github.com/Fazecast/jSerialComm
 For the execution Eclipse jobs were added to get or send values to avoid a blocking GUI!
 Please close the serial port in the GUI (or simply close the view which also closes the port) before you recompile the class!
+Upload the Arduino sketch first and probably close the Arduino IDE if it is blocking the serial output.
+*
 */
 
 package arduino;
@@ -128,9 +130,8 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 
 				try {
 					while (isClosed) {
-
+						/*Message + linebreak = 32 bytes!*/
 						byte[] readBuffer = new byte[32];
-						//or: byte[] readBuffer = new byte[MySerialPort.bytesAvailable()];
 						int numRead = MySerialPort.readBytes(readBuffer, readBuffer.length);
 						System.out.print("Read " + numRead + " bytes -");
 						// System.out.println(readBuffer);
