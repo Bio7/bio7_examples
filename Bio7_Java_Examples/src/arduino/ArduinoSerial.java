@@ -42,12 +42,16 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+
 import com.eco.bio7.collection.CustomView;
 import com.fazecast.jSerialComm.SerialPort;
 
-
 public class ArduinoSerial extends com.eco.bio7.compile.Model {
-	
+
 	public SerialPort MySerialPort;
 	public boolean isOpen;
 	protected boolean isClosed;
@@ -56,16 +60,26 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 
 		CustomView view = new CustomView();
 
+		Display d = Display.getDefault();
+		d.syncExec(new Runnable() {
+			public void run() {
+				Composite parent = view.getComposite("guiId");
+
+				parent.setLayout(new FillLayout());
+				new ModelGui(parent, ArduinoSerial.this, SWT.NONE);
+				parent.layout(true);
+			}
+		});
+
 	}
 
-	
 	public void startIt() {
-		if(MySerialPort!=null)
-		if (MySerialPort.isOpen()) {
-			System.out.println(MySerialPort.getSystemPortName() + " is already Open! ");
-			return;
-		}
-		
+		if (MySerialPort != null)
+			if (MySerialPort.isOpen()) {
+				System.out.println(MySerialPort.getSystemPortName() + " is already Open! ");
+				return;
+			}
+
 		int BaudRate = 9600;
 		int DataBits = 8;
 		int StopBits = SerialPort.ONE_STOP_BIT;
@@ -112,7 +126,6 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 
 	}
 
-	
 	public void receiveIt() {
 		isClosed = true;
 		Job job = new Job("Serial Port Reading") {
@@ -125,7 +138,7 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 
 				try {
 					while (isClosed) {
-						/*Message + linebreak = 32 bytes!*/
+						/* Message + linebreak = 32 bytes! */
 						byte[] readBuffer = new byte[32];
 						int numRead = MySerialPort.readBytes(readBuffer, readBuffer.length);
 						System.out.print("Read " + numRead + " bytes -");
@@ -161,10 +174,8 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 
 		job.schedule();
 
-		
 	}
 
-	
 	public void sendIt() {
 		// Thread.sleep(2000); //Delay introduced because when the SerialPort is opened
 		// ,Arduino gets resetted
@@ -211,14 +222,13 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 		job.schedule();
 
 	}
-	
-	
-    public void stopActions() {
+
+	public void stopActions() {
 		isClosed = false;
-    }
+	}
 
 	// Handler for Button[Button[id=null, styleClass=button]] onAction
-	
+
 	public void stopit() {
 		isClosed = false;
 		System.out.println("Closing!");
@@ -231,11 +241,11 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 	 */
 
 	@Override
-	public void close() {		
+	public void close() {
 		isClosed = false;
-		if(MySerialPort!=null) {
-		System.out.println("Closing Port!");
-		MySerialPort.closePort();
+		if (MySerialPort != null) {
+			System.out.println("Closing Port!");
+			MySerialPort.closePort();
 		}
 	}
 
