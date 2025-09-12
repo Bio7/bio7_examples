@@ -42,15 +42,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import com.eco.bio7.batch.FileRoot;
 import com.eco.bio7.collection.CustomView;
 import com.fazecast.jSerialComm.SerialPort;
-import javafx.event.ActionEvent;
 
-import javafx.fxml.FXML;
 
 public class ArduinoSerial extends com.eco.bio7.compile.Model {
-	public SerialPortReception seri;
+	
 	public SerialPort MySerialPort;
 	public boolean isOpen;
 	protected boolean isClosed;
@@ -58,13 +55,11 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 	public ArduinoSerial() {
 
 		CustomView view = new CustomView();
-		view.setFxmlCanvas("Serial", FileRoot.getCurrentCompileDir() + "/arduino/Guil.fxml", this);
 
 	}
 
-	// Handler for Button[Button[id=null, styleClass=button]] onAction
-	@FXML
-	public void startIt(ActionEvent event) {
+	
+	public void startIt() {
 		if(MySerialPort!=null)
 		if (MySerialPort.isOpen()) {
 			System.out.println(MySerialPort.getSystemPortName() + " is already Open! ");
@@ -117,8 +112,8 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 
 	}
 
-	@FXML
-	public void receiveIt(ActionEvent event) {
+	
+	public void receiveIt() {
 		isClosed = true;
 		Job job = new Job("Serial Port Reading") {
 
@@ -169,8 +164,8 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 		
 	}
 
-	@FXML
-	public void sendIt(ActionEvent event) {
+	
+	public void sendIt() {
 		// Thread.sleep(2000); //Delay introduced because when the SerialPort is opened
 		// ,Arduino gets resetted
 		isClosed = true;
@@ -217,14 +212,14 @@ public class ArduinoSerial extends com.eco.bio7.compile.Model {
 
 	}
 	
-	@FXML
-    public void stopActions(ActionEvent event) {
+	
+    public void stopActions() {
 		isClosed = false;
     }
 
 	// Handler for Button[Button[id=null, styleClass=button]] onAction
-	@FXML
-	public void stopit(ActionEvent event) {
+	
+	public void stopit() {
 		isClosed = false;
 		System.out.println("Closing!");
 		MySerialPort.closePort();
