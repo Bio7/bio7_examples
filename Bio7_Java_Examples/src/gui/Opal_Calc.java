@@ -10,7 +10,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.mihalis.opal.calculator.Calculator;
+import org.eclipse.nebula.widgets.opal.calculator.Calculator;
 
 import com.eco.bio7.collection.CustomView;
 
