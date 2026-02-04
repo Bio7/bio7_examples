@@ -1,5 +1,6 @@
 /*
-An example to write commands to a Windows shell and opens a connection to a Linux server with SSH
+A default shell example (for the Eclipse terminal see the other examples in this directory) 
+to write commands to a Windows shell and opens a connection to a Linux server with SSH
 to execute some commands. Here to update the package information with admin privileges!
 Some specified options are necessary to execute the commands 
 from a non tty (ssh -tt, sudo -S)!
