@@ -22,7 +22,7 @@ SOFTWARE.
 */
 
 /*
-Adapted Serial example from the https://github.com/xanthium-enterprises Github website using JavaFX panel for a simple GUI:
+Adapted Serial example from the https://github.com/xanthium-enterprises Github website using SWT composite embedded in a view for a simple GUI:
 Adapted read and write example from: https://github.com/xanthium-enterprises/Java-Serial-Port-Communication-Arduino-ATmega328P subsite
 Please install the Arduino IDE for the driver installation of the ports!
 In addition select the right port of your OS if necessary.
