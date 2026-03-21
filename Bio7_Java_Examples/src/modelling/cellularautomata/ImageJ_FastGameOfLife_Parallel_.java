@@ -12,6 +12,7 @@ public class ImageJ_FastGameOfLife_Parallel_ implements PlugIn {
     int WIDTH = 3000, HEIGHT = 3000, n = 1000;
 
     public void run(String arg) {
+    	IJ.resetEscape();
         ShortProcessor ip = new ShortProcessor(WIDTH, HEIGHT);
         short[] pixels = (short[]) ip.getPixels();
         for (int i = 0; i < pixels.length; i++) pixels[i] = (short)(Math.random() > 0.5 ? 255 : 0);

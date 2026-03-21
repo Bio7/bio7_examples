@@ -14,6 +14,7 @@ public class ImageJ_FastGameOfLife_Parallel_One_Loop_Byte_ implements PlugIn {
     int WIDTH = 5000, HEIGHT = 5000, n = 1000;
 
     public void run(String arg) {
+    	IJ.resetEscape();
         // Initialize the ImageJ Processor and the first buffer (8-bit)
         ByteProcessor ip = new ByteProcessor(WIDTH, HEIGHT);
         byte[] pixelsA = (byte[]) ip.getPixels();
