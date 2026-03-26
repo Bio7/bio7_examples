@@ -31,6 +31,8 @@ public class Settings extends Composite {
 
 		// Cam Dist: Range 5 to 500
 		addSlider("Cam Dist", 5, 500, (int) model.camDist, 1.0, val -> model.camDist = val);
+
+		addSlider("Floor Size", 1, 300, model.FLOOR_LEN, 1, val -> model.FLOOR_LEN = val.intValue());
 	}
 
 	/**

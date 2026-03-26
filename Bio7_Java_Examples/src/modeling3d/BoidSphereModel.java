@@ -26,6 +26,7 @@ import cern.jet.random.tdouble.DoubleUniform;
 import cern.jet.random.tdouble.engine.DoubleMersenneTwister;
 
 import static com.jogamp.opengl.GL2.*;
+import static com.eco.bio7.spatial.SpatialEvents.*;
 
 public class BoidSphereModel extends com.eco.bio7.compile.Model {
 
@@ -40,6 +41,10 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 	public double cohesionWeight = 1.0;
 	public double camDist = 20.0;
 	public float radius = 3.5f;
+	public int FLOOR_LEN = 20; // should be even
+	private final static int BLUE_TILE = 0; // floor tile colour types
+	private final static int GREEN_TILE = 1;
+	public static float[] TransformMatrix = new float[16];
 
 	public BoidSphereModel() {
 
@@ -80,7 +85,15 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 		// Execute boid behavior and rendering
 		for (Boid b : boids) {
 			b.run(boids, gl, glut);
+		} /* Add a boid if the mouse is double-clicked! */
+		if (isMouseDoubleClicked()) {
+
+			boids.add(new Boid(0, 0, 100));
+
 		}
+		gl.glScaled(100, 100, 100);
+		gl.glRotated(90.0, 1.0, 0, 0);
+		drawFloor(gl);
 
 		// Camera tracking logic for the lead boid
 		if (!boids.isEmpty()) {
@@ -225,4 +238,64 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 				y = -1000;
 		}
 	}
+	/*
+	 * Example from the book "Pro Java 6 3D Game Development" from Andrew Davison to
+	 * draw a Checkerboard with text.
+	 */
+
+	private void drawFloor(GL2 gl)
+	/*
+	 * Create tiles, the origin marker, then the axes labels. The tiles are in a
+	 * checkboard pattern, alternating between green and blue.
+	 */
+	{
+		gl.glDisable(GL2.GL_LIGHTING);
+
+		drawTiles(BLUE_TILE, gl); // blue tiles
+		drawTiles(GREEN_TILE, gl); // green
+
+		gl.glEnable(GL2.GL_LIGHTING);
+	} // end of CheckerFloor()
+
+	private void drawTiles(int drawType, GL2 gl)
+	/*
+	 * Create a series of quads, all with the same colour. They are spaced out over
+	 * a FLOOR_LEN*FLOOR_LEN area, with the area centered at (0,0) on the XZ plane,
+	 * and y==0.
+	 */
+	{
+		if (drawType == BLUE_TILE)
+			gl.glColor3f(0.0f, 0.1f, 0.4f);
+		else
+			// green
+			gl.glColor3f(0.0f, 0.5f, 0.1f);
+
+		gl.glBegin(GL2.GL_QUADS);
+		boolean aBlueTile;
+		for (int z = -FLOOR_LEN / 2; z <= (FLOOR_LEN / 2) - 1; z++) {
+			aBlueTile = (z % 2 == 0) ? true : false; // set colour type for new row
+			for (int x = -FLOOR_LEN / 2; x <= (FLOOR_LEN / 2) - 1; x++) {
+				if (aBlueTile && (drawType == BLUE_TILE)) // blue tile and drawing blue
+					drawTile(x, z, gl);
+				else if (!aBlueTile && (drawType == GREEN_TILE)) // green
+					drawTile(x, z, gl);
+				aBlueTile = !aBlueTile;
+			}
+		}
+		gl.glEnd();
+	} // end of drawTiles()
+
+	private void drawTile(int x, int z, GL2 gl)
+	/*
+	 * Coords for a single blue or green square; its top left hand corner at
+	 * (x,0,z).
+	 */
+	{
+		// points created in counter-clockwise order
+		gl.glVertex3f(x, 0.0f, z + 1.0f); // bottom left point
+		gl.glVertex3f(x + 1.0f, 0.0f, z + 1.0f);
+		gl.glVertex3f(x + 1.0f, 0.0f, z);
+		gl.glVertex3f(x, 0.0f, z);
+	} // end of drawTile()
+
 }
