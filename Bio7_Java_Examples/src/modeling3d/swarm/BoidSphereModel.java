@@ -9,7 +9,7 @@
 * 
 * Stop the "Play/Pause" action to recompile and press "Setup" again.
 */
-package modeling3d;
+package modeling3d.swarm;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,11 +46,16 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 	private final static int GREEN_TILE = 1;
 	public static float[] TransformMatrix = new float[16];
 
+	/* Start after compilation if run action is active! */
 	public BoidSphereModel() {
-
+		setup();
 	}
 
-	public void setup(GL2 gl, GLU glu, GLUT glut) {
+	public void setup() {
+		setupModel();
+	}
+
+	private void setupModel() {
 		// Initialize the custom SWT GUI
 		createGui();
 
@@ -64,6 +69,15 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 		for (int i = 0; i < 200; i++) {
 			boids.add(new Boid(uni.nextDouble(), uni.nextDouble(), (twist.nextDouble() - 0.5) * 20));
 		}
+		/* Start the run method! */
+		if (!SpatialUtil.isStarted())
+			SpatialUtil.startStop();
+
+	}
+
+	public void setup(GL2 gl, GLU glu, GLUT glut) {
+		setupModel();
+
 	}
 
 	private void createGui() {

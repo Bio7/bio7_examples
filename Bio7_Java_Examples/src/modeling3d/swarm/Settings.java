@@ -1,4 +1,4 @@
-package modeling3d;
+package modeling3d.swarm;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;

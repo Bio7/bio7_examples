@@ -51,116 +51,133 @@ import java.util.stream.IntStream;
 
 public class GameOfLife3D extends com.eco.bio7.compile.Model {
 
-    // Grid Settings - Increase RES for larger simulations (e.g., 40 or 50)
-    private final int RES = 50; 
-    private final int RES_SQ = RES * RES;
-    private final int totalCells = RES * RES * RES;
-    
-    // Using byte arrays to save memory and improve CPU cache performance
-    private byte[] grid = new byte[totalCells];
-    private byte[] nextGrid = new byte[totalCells];
-    
-    // OpenGL Optimization: Display List ID
-    private int cubeList = -1;
-    private final float size = 30.0f;
-    private final float gap = 35.0f;
+	// Grid Settings - Increase RES for larger simulations (e.g., 40 or 50)
+	private final int RES = 50;
+	private final int RES_SQ = RES * RES;
+	private final int totalCells = RES * RES * RES;
 
-    public void setup(GL2 gl, GLU glu, GLUT glut) {
-        if (!SpatialUtil.isStarted()) SpatialUtil.startStop();
-        
-        // Initialize grid with a random seed using parallel streams for speed
-        IntStream.range(0, totalCells).parallel().forEach(i -> {
-            grid[i] = (byte) (Math.random() > 0.85 ? 1 : 0);
-        });
-    }
+	// Using byte arrays to save memory and improve CPU cache performance
+	private byte[] grid = new byte[totalCells];
+	private byte[] nextGrid = new byte[totalCells];
 
-    public void run(GL2 gl, GLU glu, GLUT glut) {
-        // Compile the cube geometry once onto the GPU memory
-        if (cubeList == -1) {
-            cubeList = gl.glGenLists(1);
-            gl.glNewList(cubeList, GL_COMPILE);
-            glut.glutSolidCube(size);
-            gl.glEndList();
-        }
+	// OpenGL Optimization: Display List ID
+	private int cubeList = -1;
+	private final float size = 30.0f;
+	private final float gap = 35.0f;
 
-        // Trigger logic update via Bio7 control panel
-        if (SpatialUtil.canStep()) {
-            calculateParallel();
-        }
+	/* Start after compilation if run action is active! */
+	public GameOfLife3D() {
+		setup();
+	}
 
-        renderFast(gl);
-    }
+	// Called when the class is compiled! Action in the main toolbar!
+	public void setup() {
+		setupModel();
+	}
 
-    private void calculateParallel() {
-        // Use all available CPU cores to process the 3D grid logic
-        IntStream.range(0, totalCells).parallel().forEach(i -> {
-            // De-flatten 1D index back to 3D coordinates
-            int z = i / RES_SQ;
-            int y = (i % RES_SQ) / RES;
-            int x = i % RES;
-            
-            int neighbors = countNeighbors(x, y, z);
-            
-            // Standard 3D GOL Rules: 4-5/5 (Survival/Birth)
-            if (grid[i] == 1) {
-                // Survival
-                nextGrid[i] = (byte) ((neighbors == 4 || neighbors == 5) ? 1 : 0);
-            } else {
-                // Birth
-                nextGrid[i] = (byte) (neighbors == 5 ? 1 : 0);
-            }
-        });
-        
-        // Fast memory copy to update the main grid
-        System.arraycopy(nextGrid, 0, grid, 0, totalCells);
-    }
+	private void setupModel() {
+		/*Start the run method!*/
+		if (!SpatialUtil.isStarted())
+			SpatialUtil.startStop();
 
-    private int countNeighbors(int x, int y, int z) {
-        int count = 0;
-        // Search all 26 direct neighbors in the 3x3x3 neighborhood
-        for (int dz = -1; dz <= 1; dz++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                for (int dx = -1; dx <= 1; dx++) {
-                    if (dx == 0 && dy == 0 && dz == 0) continue;
-                    
-                    int nx = x + dx, ny = y + dy, nz = z + dz;
-                    // Boundary check
-                    if (nx >= 0 && nx < RES && ny >= 0 && ny < RES && nz >= 0 && nz < RES) {
-                        count += grid[nx + ny * RES + nz * RES_SQ];
-                    }
-                }
-            }
-        }
-        return count;
-    }
+		// Initialize grid with a random seed using parallel streams for speed
+		IntStream.range(0, totalCells).parallel().forEach(i -> {
+			grid[i] = (byte) (Math.random() > 0.85 ? 1 : 0);
+		});
+	}
 
-    private void renderFast(GL2 gl) {
-        float offset = (RES * gap) / 2.0f;
-        gl.glPushMatrix();
-        // Center the entire grid in the view
-        gl.glTranslatef(-offset, -offset, -offset);
+	public void setup(GL2 gl, GLU glu, GLUT glut) {
+		setupModel();
+	}
 
-        gl.glEnable(GL_COLOR_MATERIAL);
-        
-        for (int i = 0; i < totalCells; i++) {
-            // Only draw live cells to save rendering time
-            if (grid[i] == 1) {
-                int z = i / RES_SQ;
-                int y = (i % RES_SQ) / RES;
-                int x = i % RES;
+	public void run(GL2 gl, GLU glu, GLUT glut) {
+		// Compile the cube geometry once onto the GPU memory
+		if (cubeList == -1) {
+			cubeList = gl.glGenLists(1);
+			gl.glNewList(cubeList, GL_COMPILE);
+			glut.glutSolidCube(size);
+			gl.glEndList();
+		}
 
-                gl.glPushMatrix();
-                gl.glTranslatef(x * gap, y * gap, z * gap);
-                
-                // Dynamic color based on cell position
-                gl.glColor3f(x / (float)RES, y / (float)RES, z / (float)RES);
-                
-                // Execute pre-compiled GPU drawing command
-                gl.glCallList(cubeList);
-                
-                gl.glPopMatrix();
-            }
-        }
-        gl.glPopMatrix();
-    }
+		// Trigger logic update via Bio7 control panel
+		if (SpatialUtil.canStep()) {
+			calculateParallel();
+		}
+
+		renderFast(gl);
+	}
+
+	private void calculateParallel() {
+		// Use all available CPU cores to process the 3D grid logic
+		IntStream.range(0, totalCells).parallel().forEach(i -> {
+			// De-flatten 1D index back to 3D coordinates
+			int z = i / RES_SQ;
+			int y = (i % RES_SQ) / RES;
+			int x = i % RES;
+
+			int neighbors = countNeighbors(x, y, z);
+
+			// Standard 3D GOL Rules: 4-5/5 (Survival/Birth)
+			if (grid[i] == 1) {
+				// Survival
+				nextGrid[i] = (byte) ((neighbors == 4 || neighbors == 5) ? 1 : 0);
+			} else {
+				// Birth
+				nextGrid[i] = (byte) (neighbors == 5 ? 1 : 0);
+			}
+		});
+
+		// Fast memory copy to update the main grid
+		System.arraycopy(nextGrid, 0, grid, 0, totalCells);
+	}
+
+	private int countNeighbors(int x, int y, int z) {
+		int count = 0;
+		// Search all 26 direct neighbors in the 3x3x3 neighborhood
+		for (int dz = -1; dz <= 1; dz++) {
+			for (int dy = -1; dy <= 1; dy++) {
+				for (int dx = -1; dx <= 1; dx++) {
+					if (dx == 0 && dy == 0 && dz == 0)
+						continue;
+
+					int nx = x + dx, ny = y + dy, nz = z + dz;
+					// Boundary check
+					if (nx >= 0 && nx < RES && ny >= 0 && ny < RES && nz >= 0 && nz < RES) {
+						count += grid[nx + ny * RES + nz * RES_SQ];
+					}
+				}
+			}
+		}
+		return count;
+	}
+
+	private void renderFast(GL2 gl) {
+		float offset = (RES * gap) / 2.0f;
+		gl.glPushMatrix();
+		// Center the entire grid in the view
+		gl.glTranslatef(-offset, -offset, -offset);
+
+		gl.glEnable(GL_COLOR_MATERIAL);
+
+		for (int i = 0; i < totalCells; i++) {
+			// Only draw live cells to save rendering time
+			if (grid[i] == 1) {
+				int z = i / RES_SQ;
+				int y = (i % RES_SQ) / RES;
+				int x = i % RES;
+
+				gl.glPushMatrix();
+				gl.glTranslatef(x * gap, y * gap, z * gap);
+
+				// Dynamic color based on cell position
+				gl.glColor3f(x / (float) RES, y / (float) RES, z / (float) RES);
+
+				// Execute pre-compiled GPU drawing command
+				gl.glCallList(cubeList);
+
+				gl.glPopMatrix();
+			}
+		}
+		gl.glPopMatrix();
+	}
 }
