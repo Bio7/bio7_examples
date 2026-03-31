@@ -1,4 +1,4 @@
-package modelling.cellularautomata.imagej;
+package modelling.imagej.cellularautomata;
 
 /*This example uses parallel processing with Java Streams. In additon a 16-bit image is used
   with bit-shift - instead of a temporary array!

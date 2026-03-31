@@ -1,4 +1,4 @@
-package modeling.swarm.imagej;
+package modeling.imagej.swarm;
 
 /**
  * Flocking_Plugin

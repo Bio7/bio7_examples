@@ -1,4 +1,4 @@
-package modeling.fractal.imagej;
+package modeling.imagej.fractal;
 
 import ij.*;
 import ij.process.*;

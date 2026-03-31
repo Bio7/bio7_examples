@@ -1,4 +1,4 @@
-package modelling.cellularautomata.imagej;
+package modelling.imagej.cellularautomata;
 
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
