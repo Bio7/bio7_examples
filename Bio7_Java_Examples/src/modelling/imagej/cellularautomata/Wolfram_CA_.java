@@ -11,6 +11,7 @@ import ij.plugin.*;
 public class Wolfram_CA_ implements PlugIn {
 
     public void run(String arg) {
+    	IJ.resetEscape();
         // 1. Setup User Interface
         GenericDialog gd = new GenericDialog("Wolfram 1D CA");
         gd.addNumericField("Single Rule (0-255):", 30, 0);

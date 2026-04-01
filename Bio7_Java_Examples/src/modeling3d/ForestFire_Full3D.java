@@ -4,6 +4,8 @@ package modeling3d;
 import static com.eco.bio7.spatial.SpatialEvents.getPressEvent;
 import static com.eco.bio7.spatial.SpatialEvents.isMousePressed;
 import static com.jogamp.opengl.GL2.*;
+import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_COLOR_MATERIAL;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -104,6 +106,7 @@ public class ForestFire_Full3D extends com.eco.bio7.compile.Model {
 	}
 
 	public void run(GL2 gl, GLU glu, GLUT glut) {
+		
 		// Initialize GPU List for trees
 		if (treeDisplayList == -1)
 			createTreeList(gl, glut);
@@ -117,7 +120,7 @@ public class ForestFire_Full3D extends com.eco.bio7.compile.Model {
 		if (SpatialUtil.canStep()) {
 			updateLogic();
 		}
-
+		gl.glEnable(GL_COLOR_MATERIAL);
 		// 3. Drawing
 		renderTerrain(gl);
 		renderForest(gl, glut);
