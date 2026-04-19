@@ -152,13 +152,14 @@ public class GameOfLife3D extends com.eco.bio7.compile.Model {
 				}
 				countLivingCells();
 				updateStatistics();
-				pixelBufferNeedsUpdate = true;
+
 			} catch (ArrayIndexOutOfBoundsException e) {
 				System.err.println("Bounds error: " + e.getMessage());
 				initializeGrid();
 			}
 		}
-
+		
+		pixelBufferNeedsUpdate = true;
 		render(gl, glut);
 		drawStatsOverlay(gl, glu, glut);
 	}
