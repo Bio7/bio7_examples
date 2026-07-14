@@ -52,7 +52,7 @@ import java.util.stream.IntStream;
 public class GameOfLife3D extends com.eco.bio7.compile.Model {
 
 	// Grid Settings - Increase RES for larger simulations (e.g., 40 or 50)
-	private final int RES = 50;
+	private final int RES = 100;
 	private final int RES_SQ = RES * RES;
 	private final int totalCells = RES * RES * RES;
 

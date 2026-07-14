@@ -9,6 +9,7 @@ import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_COLOR_MATERIAL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
+import com.eco.bio7.collection.Work;
 import com.eco.bio7.spatial.SpatialPicking;
 import com.eco.bio7.spatial.SpatialUtil;
 import java.util.stream.IntStream;
@@ -80,6 +81,7 @@ public class ForestFire_Full3D extends com.eco.bio7.compile.Model {
 	}
 
 	private void setupModel() {
+		Work.openPerspective("com.eco.bio7.perspective_3d");
 		/*Start the run method!*/
 		if (!SpatialUtil.isStarted())
 			SpatialUtil.startStop();

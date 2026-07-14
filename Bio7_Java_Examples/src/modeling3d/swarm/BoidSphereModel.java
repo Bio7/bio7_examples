@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import com.eco.bio7.collection.CustomView;
+import com.eco.bio7.collection.Work;
 import com.eco.bio7.spatial.SpatialCamera;
 import com.eco.bio7.spatial.SpatialUtil;
 import com.jogamp.opengl.GL2;
@@ -56,6 +57,7 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 	}
 
 	private void setupModel() {
+		Work.openPerspective("com.eco.bio7.perspective_3d");
 		// Initialize the custom SWT GUI
 		createGui();
 
