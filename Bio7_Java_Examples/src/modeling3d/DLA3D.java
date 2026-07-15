@@ -4,6 +4,7 @@ import static com.jogamp.opengl.GL2.*;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
+import com.eco.bio7.collection.Work;
 import com.eco.bio7.spatial.SpatialUtil;
 
 /**
@@ -12,8 +13,8 @@ import com.eco.bio7.spatial.SpatialUtil;
  * Logic: 1. A central seed is placed in the 3D grid. 2. Particles move randomly
  * (Brownian motion) through the space. 3. When a particle touches a fixed
  * (frozen) cell, it freezes too. 4. This creates fractal, coral-like growth
- * structures. In the 3D "Options Space" view increase the step rate in the "Time" tab
- * and start the model to see the aggregating cells.
+ * structures. In the 3D "Options Space" view increase the step rate in the
+ * "Time" tab and start the model to see the aggregating cells.
  */
 public class DLA3D extends com.eco.bio7.compile.Model {
 
@@ -25,12 +26,16 @@ public class DLA3D extends com.eco.bio7.compile.Model {
 	private int cubeList = -1;
 	private final float spacing = 15.0f;
 
+	public DLA3D() {
+		setup();
+	}
+
 	public void setup() {
+		Work.openPerspective("com.eco.bio7.perspective_3d");
 		setupModel();
 	}
 
 	private void setupModel() {
-		
 
 		// Place a seed in the center
 		grid[RES / 2 + (RES / 2) * RES + (RES / 2) * RES_SQ] = 1;
