@@ -8,6 +8,8 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import com.eco.bio7.spatial.SpatialUtil;
 import com.eco.bio7.spatial.SpatialEvents;
 import com.eco.bio7.collection.CustomView;
+import com.eco.bio7.collection.Work;
+
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.FillLayout;
@@ -84,6 +86,7 @@ public class GameOfLife3D extends com.eco.bio7.compile.Model {
 	}
 
 	private void setupModel() {
+		Work.openPerspective("com.eco.bio7.perspective_3d");
 		if (!SpatialUtil.isStarted())
 			SpatialUtil.startStop();
 
