@@ -50,16 +50,11 @@ public class TankExample extends com.eco.bio7.compile.Model {
 		ScheduledExecutorService scheduler = Executors
 				.newScheduledThreadPool(1);
 		ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(
-				new Runnable() {
-
+				() -> Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						Display.getDefault().asyncExec(new Runnable() {
-							public void run() {
-								tank.setValue(Math.sin(counter++ / 10.0) * 100);
-							}
-						});
+						tank.setValue(Math.sin(counter++ / 10.0) * 100);
 					}
-				}, 100, 100, TimeUnit.MILLISECONDS);
+				}), 100, 100, TimeUnit.MILLISECONDS);
 
 	}
 }

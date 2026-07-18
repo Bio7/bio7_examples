@@ -49,13 +49,11 @@ public class ComprehensiveExample extends com.eco.bio7.compile.Model {
 
 		Display dis = CustomView.getDisplay();
 
-		dis.syncExec(new Runnable() {
-			public void run() {
-				LightweightSystem lws = view.getDraw2d("ComprehensiveExample");
-				final XYGraphTest testFigure = new XYGraphTest();
-				lws.setContents(testFigure);
-				
-			}
+		dis.syncExec(() -> {
+			LightweightSystem lws = view.getDraw2d("ComprehensiveExample");
+			final XYGraphTest testFigure = new XYGraphTest();
+			lws.setContents(testFigure);
+			
 		});
 	}
 }

@@ -54,11 +54,7 @@ public class MeterExample extends com.eco.bio7.compile.Model{
 		ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(new Runnable() {
 			
 			public void run() {
-				Display.getDefault().asyncExec(new Runnable() {					
-					public void run() {
-						meterFigure.setValue(Math.sin(counter++/10.0)*100);						
-					}
-				});
+				Display.getDefault().asyncExec(() -> meterFigure.setValue(Math.sin(counter++/10.0)*100));
 			}
 		}, 100, 100, TimeUnit.MILLISECONDS);		
 		
