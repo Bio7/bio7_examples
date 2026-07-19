@@ -15,7 +15,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.widgets.*;
+
 import com.eco.bio7.collection.CustomView;
 import com.eco.bio7.collection.Work;
 import com.eco.bio7.spatial.SpatialCamera;
@@ -57,7 +64,9 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 	}
 
 	private void setupModel() {
-		Work.openPerspective("com.eco.bio7.perspective_3d");
+		Work.openPerspective("com.eco.bio7.CustomPerspective");
+		Work.openView("com.eco.bio7.spatial");
+		// Work.openPerspective("com.eco.bio7.perspective_3d");
 		// Initialize the custom SWT GUI
 		createGui();
 
@@ -83,11 +92,20 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 	}
 
 	private void createGui() {
+
 		CustomView view = new CustomView();
 		Display d = Display.getDefault();
 		d.syncExec(() -> {
 			// Create a tab in Bio7's Custom View
-			Composite parent = view.getComposite("Boid Control Panel", null);
+
+			CustomView customView = new CustomView();
+			// Move default Options3D view widgets to a custom view with a predefined
+			// location of the Custom perspective.
+			moveViewToPanel(customView, "com.eco.bio7.discrete3d.Options3d", "subLeftTop", "Options3D");
+			// Create a custom view with a predefined location of the Custom perspective.
+			Composite parent = view.getComposite("subLeftBottom");
+			/* Also rename view else id is used! */
+			renamePanelTab(parent, "Settings");
 			parent.setLayout(new FillLayout());
 			// Instantiate our manual GUI class
 			new Settings(parent, BoidSphereModel.this);
@@ -313,5 +331,144 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 		gl.glVertex3f(x + 1.0f, 0.0f, z);
 		gl.glVertex3f(x, 0.0f, z);
 	} // end of drawTile()
+   /*The following two methods will be API in the next release to call them easily!*/
+	private void moveViewToPanel(final CustomView customView, final String viewId, final String panelLocation,
+			String newTitle) {
+		if (customView == null || viewId == null || panelLocation == null) {
+			return;
+		}
 
+		// 1. Get the target composite from Bio7 and set the focus
+		final Composite targetParent = customView.getComposite(panelLocation);
+		if (targetParent == null) {
+			System.err.println("Bio7 panel '" + panelLocation + "' could not be found.");
+			return;
+		}
+		renamePanelTab(targetParent, newTitle);
+		targetParent.setFocus();
+
+		// 2. First open the view the classic way in the Eclipse background
+		Work.openView(viewId);
+
+		// 3. Defer to the UI thread asynchronously so the widgets have time to render
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				if (targetParent.isDisposed()) {
+					return;
+				}
+
+				try {
+					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					IViewPart targetView = page.findView(viewId);
+
+					if (targetView != null) {
+						Control foundControl = null;
+
+						// Strategy A: Try to call the view's standard control getter
+						try {
+							java.lang.reflect.Method getControlMethod = targetView.getClass().getMethod("getControl");
+							foundControl = (Control) getControlMethod.invoke(targetView);
+						} catch (Exception e) {
+							// Ignore if not publicly declared
+						}
+
+						// Strategy B: If null, scan the view's internal fields for
+						// initialized widgets
+						if (foundControl == null) {
+							java.lang.reflect.Field[] fields = targetView.getClass().getDeclaredFields();
+							for (java.lang.reflect.Field field : fields) {
+								if (Control.class.isAssignableFrom(field.getType())) {
+									field.setAccessible(true);
+									Object value = field.get(targetView);
+									if (value != null) {
+										foundControl = (Control) value;
+										break;
+									}
+								}
+							}
+						}
+
+						// Strategy C: Climb up recursively to the view's true root layout container
+						if (foundControl != null && !foundControl.isDisposed()) {
+							Control rootContainer = foundControl;
+
+							/*
+							 * Climb the widget tree upwards until we hit the official boundary of the
+							 * Eclipse framework wrappers (tab folder structures).
+							 */
+							while (rootContainer.getParent() != null) {
+								String parentClassName = rootContainer.getParent().getClass().getName();
+
+								if (parentClassName.contains("org.eclipse.ui")
+										|| parentClassName.contains("org.eclipse.e4")
+										|| parentClassName.contains("ViewSite")) {
+									break; // Stop right before the workbench wrappers
+								}
+								rootContainer = rootContainer.getParent();
+							}
+
+							// 4. REPARENTING: Change the native SWT parent to the Bio7 panel
+							rootContainer.setParent(targetParent);
+
+							// 5. Force a layout update so the elements adapt to the panel
+							targetParent.layout(true, true);
+							rootContainer.setVisible(true);
+
+							// 6. Close the empty, unused Eclipse background tab of the original view
+							page.hideView(targetView);
+						} else {
+							System.err.println("Could not locate the UI components of view '" + viewId + "'.");
+						}
+					}
+				} catch (Exception e) {
+					System.err.println("Error while moving view '" + viewId + "': " + e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	private void renamePanelTab(final Composite panelComposite, final String newTitle) {
+		if (panelComposite == null || panelComposite.isDisposed() || newTitle == null) {
+			return;
+		}
+
+		// Climb up the widget tree until we reach the CTabFolder of the CustomView
+		Composite parent = panelComposite.getParent();
+		Control child = panelComposite;
+
+		while (parent != null) {
+			if (parent instanceof CTabFolder) {
+				CTabFolder folder = (CTabFolder) parent;
+				for (CTabItem item : folder.getItems()) {
+					// Find the CTabItem whose control is our panel (or contains it)
+					if (item.getControl() == child || item.getControl() == panelComposite) {
+						item.setText(newTitle);
+						return;
+					}
+				}
+				// Fallback: if getControl() returns null for the items,
+				// rename the currently selected tab instead
+				if (folder.getSelection() != null) {
+					folder.getSelection().setText(newTitle);
+				}
+				return;
+			}
+			// Also support the classic (non-custom) TabFolder
+			if (parent instanceof TabFolder) {
+				TabFolder folder = (TabFolder) parent;
+				for (TabItem item : folder.getItems()) {
+					if (item.getControl() == child || item.getControl() == panelComposite) {
+						item.setText(newTitle);
+						return;
+					}
+				}
+				return;
+			}
+			child = parent;
+			parent = parent.getParent();
+		}
+
+		System.err.println("No tab container found for the panel - title unchanged.");
+	}
 }
