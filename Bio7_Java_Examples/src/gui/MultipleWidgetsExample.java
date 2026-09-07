@@ -33,13 +33,13 @@ public class MultipleWidgetsExample extends com.eco.bio7.compile.Model{
 	    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 	    parent.setLayout(layout);
 	    //create canvases to hold the widgets.
-	    Canvas knobCanvas = new Canvas(parent, SWT.NONE);
+	    Canvas knobCanvas = new Canvas(parent, SWT.TRANSPARENT | SWT.DOUBLE_BUFFERED);
 	    knobCanvas.setLayoutData(gd);
-	    Canvas gaugeCanvas = new Canvas(parent, SWT.NONE);
+	    Canvas gaugeCanvas = new Canvas(parent, SWT.TRANSPARENT | SWT.DOUBLE_BUFFERED);
 	    gaugeCanvas.setLayoutData(gd);
-	    Canvas thermoCanvas = new Canvas(parent, SWT.NONE);
+	    Canvas thermoCanvas = new Canvas(parent, SWT.TRANSPARENT | SWT.DOUBLE_BUFFERED);
 	    thermoCanvas.setLayoutData(gd);
-	    Canvas tankCanvas = new Canvas(parent, SWT.NONE);
+	    Canvas tankCanvas = new Canvas(parent, SWT.TRANSPARENT | SWT.DOUBLE_BUFFERED);
 	    tankCanvas.setLayoutData(gd);
 	    
 	    //use LightweightSystem to create the bridge between SWT and draw2D

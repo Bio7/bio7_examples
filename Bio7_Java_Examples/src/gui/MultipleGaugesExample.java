@@ -65,7 +65,7 @@ public class MultipleGaugesExample extends com.eco.bio7.compile.Model {
 			group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 			/* Create the canvas and the SWT <-> Draw2D bridge. */
-			Canvas gaugeCanvas = new Canvas(group, SWT.NONE);
+			Canvas gaugeCanvas = new Canvas(group, SWT.TRANSPARENT | SWT.DOUBLE_BUFFERED);
 			LightweightSystem lws = new LightweightSystem(gaugeCanvas);
 
 			GaugeFigure gauge = new GaugeFigure();

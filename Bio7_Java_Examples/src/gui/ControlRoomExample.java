@@ -112,7 +112,7 @@ public class ControlRoomExample extends com.eco.bio7.compile.Model {
 	/** Left sash panel: 3 stacked vertical habitat level indicators. */
 	private void createHabitatPanel(Composite sash) {
 
-		Composite levels = new Composite(sash, SWT.NONE);
+		Composite levels = new Composite(sash, SWT.TRANSPARENT | SWT.DOUBLE_BUFFERED);
 		levels.setLayout(new GridLayout(1, true));
 
 		soilMoisture = addWidget(levels, "Soil Moisture", new TankFigure());

@@ -169,7 +169,7 @@ public class NineNebulaWidgetsExample extends com.eco.bio7.compile.Model {
 		/* Every control needs its own GridData instance! */
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		final Canvas canvas = new Canvas(group, SWT.NONE);
+		final Canvas canvas = new Canvas(group, SWT.TRANSPARENT | SWT.DOUBLE_BUFFERED);
 
 		figure.setRange(MIN, MAX);
 		figure.setValue(MIN + 0.5 * (MAX - MIN));
