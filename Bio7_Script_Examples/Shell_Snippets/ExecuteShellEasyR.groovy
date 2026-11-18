@@ -2,10 +2,10 @@
 
 import com.eco.bio7.console.ShellUtil;
 
-String title="Rserve";//For a new process change the title!
+String title="R";//For a new process change the title!
 String processPath="/usr/local/bin/r";
 String command="""
--e 'library(Rserve);run.Rserve();'
+-e 'print(summary(runif(100)))'
 """;
 ShellUtil shellUtil=new ShellUtil()
 shellUtil.execShellCommand(title,processPath,command);

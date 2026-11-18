@@ -1,0 +1,70 @@
+---
+title: "Python and R Chunks in one Document"
+output: html_document
+---
+
+# Python and R together
+
+R chunks (```` ```{r} ````) run in R, Python chunks (```` ```{python} ````) in the
+embedded Python of Bio7. Both can be mixed in one document. The data are
+exchanged with the module `bio7` of the embedded Python:
+
+| Python                        | Description                                  |
+|-------------------------------|----------------------------------------------|
+| `bio7.r("code")`              | evaluates R code, returns the value          |
+| `bio7.from_r("name")`         | the value of an R variable                   |
+| `bio7.to_r("name", value)`    | assigns a Python value in R                  |
+
+Vectors and matrices become numpy arrays, data frames pandas DataFrames, named
+lists dicts (and vice versa). **R must be started** for this example.
+
+## Data in R
+
+```{r}
+data(iris)
+fit <- lm(Petal.Width ~ Petal.Length, data = iris)
+coef(fit)
+```
+
+## The data frame of R in Python
+
+```{python}
+import bio7
+import numpy as np
+
+iris = bio7.from_r("iris")
+iris.groupby("Species").mean(numeric_only=True).round(2)
+```
+
+## A Python plot of the R data and the R model
+
+```{python}
+import matplotlib.pyplot as plt
+
+coef = bio7.r("coef(fit)")
+xs = np.linspace(iris["Petal.Length"].min(), iris["Petal.Length"].max(), 50)
+for species, group in iris.groupby("Species"):
+    plt.scatter(group["Petal.Length"], group["Petal.Width"], s=14, label=species)
+plt.plot(xs, coef[0] + coef[1] * xs, color="black", lw=1.5, label="lm (R)")
+plt.xlabel("Petal length")
+plt.ylabel("Petal width")
+plt.legend()
+plt.show()
+```
+
+## Computed in Python, tested in R
+
+```{python}
+# The ratio of the petal width and length per flower (numpy) to R
+ratio = (iris["Petal.Width"] / iris["Petal.Length"]).to_numpy()
+bio7.to_r("ratio", ratio)
+bio7.to_r("species", iris["Species"].astype(str).tolist())
+print("Transferred", ratio.size, "values to R")
+```
+
+```{r}
+species <- factor(species)
+tapply(ratio, species, mean)
+kruskal.test(ratio ~ species)
+boxplot(ratio ~ species, col = c("#66c2a5", "#fc8d62", "#8da0cb"), ylab = "Petal width / length")
+```

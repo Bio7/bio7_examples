@@ -1,0 +1,102 @@
+---
+title: "A Data Analysis Report with Python Chunks"
+output: html_document
+---
+
+# Population growth and a simulation
+
+A small report with pandas, numpy and matplotlib: a logistic growth model is
+fitted to simulated observations and a stochastic simulation is compared with
+the model. Run all chunks with *Run All*.
+
+## Observations
+
+```{python}
+import numpy as np
+import pandas as pd
+
+rng = np.random.default_rng(1)
+
+def logistic(t, n0, r, k):
+    return k / (1 + (k - n0) / n0 * np.exp(-r * t))
+
+t = np.arange(0, 40, 2.0)
+observed = logistic(t, 5, 0.25, 500) * rng.lognormal(0, 0.08, t.size)
+obs = pd.DataFrame({"time": t, "N": observed.round(1)})
+obs.head(8)
+```
+
+## Fit of the model
+
+The parameters are estimated by least squares (scipy if installed, else a
+simple grid search with numpy).
+
+```{python}
+try:
+    from scipy.optimize import curve_fit
+    (n0, r, k), _ = curve_fit(logistic, t, observed, p0=(1, 0.1, observed.max()))
+    method = "scipy.optimize.curve_fit"
+except ImportError:
+    grid = [(a, b, c) for a in np.linspace(1, 20, 20) for b in np.linspace(0.05, 0.6, 56)
+            for c in np.linspace(300, 700, 41)]
+    n0, r, k = min(grid, key=lambda p: np.sum((logistic(t, *p) - observed) ** 2))
+    method = "grid search"
+print(f"{method}: N0 = {n0:.2f}, r = {r:.3f}, K = {k:.1f}")
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+tt = np.linspace(0, t.max(), 200)
+plt.plot(t, observed, "o", label="observed")
+plt.plot(tt, logistic(tt, n0, r, k), lw=2, label="logistic model")
+plt.axhline(k, ls="--", color="gray", lw=1)
+plt.text(1, k * 1.02, "K", color="gray")
+plt.xlabel("Time")
+plt.ylabel("Population size")
+plt.legend()
+plt.show()
+```
+
+## A stochastic simulation
+
+Birth-death simulations with the fitted rates (the density dependence in the
+death rate):
+
+```{python}
+def simulate(n0, r, k, steps=40, dt=1.0):
+    n = [int(round(n0))]
+    for _ in range(steps):
+        cur = n[-1]
+        births = rng.poisson(max(r, 0) * cur * dt)
+        deaths = rng.binomial(cur, min(1.0, r * cur / k * dt)) if cur > 0 else 0
+        n.append(max(cur + births - deaths, 0))
+    return np.array(n)
+
+runs = np.array([simulate(n0, r, k) for _ in range(200)])
+summary = pd.DataFrame({"mean": runs.mean(axis=0), "q05": np.percentile(runs, 5, axis=0),
+                        "q95": np.percentile(runs, 95, axis=0)})
+summary.iloc[::5].round(1)
+```
+
+```{python}
+steps = np.arange(runs.shape[1])
+fig, ax = plt.subplots(figsize=(8, 4))
+for run in runs[:30]:
+    ax.plot(steps, run, color="steelblue", alpha=0.15, lw=0.8)
+ax.fill_between(steps, summary["q05"], summary["q95"], color="orange", alpha=0.25, label="90 % of the runs")
+ax.plot(steps, summary["mean"], color="darkorange", lw=2, label="mean")
+ax.plot(steps, logistic(steps, n0, r, k), "k--", lw=1.5, label="model")
+ax.set_xlabel("Time")
+ax.set_ylabel("Population size")
+ax.legend()
+fig.tight_layout()
+```
+
+## Result
+
+```{python}
+final = runs[:, -1]
+print(f"Final size: mean {final.mean():.0f}, sd {final.std():.0f} (K = {k:.0f})")
+print(f"Extinct runs: {(final == 0).sum()} of {len(final)}")
+```

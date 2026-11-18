@@ -2,25 +2,27 @@
 Transfer different data types from R to Beanshell or Java!
 */
 
-import org.rosuda.REngine.REXPLogical;
+import com.eco.bio7.rbridge.backend.RBackend;
+import com.eco.bio7.rbridge.RBridge;
+import com.eco.bio7.rffm.RValue;
 
-RConnection c = RServe.getConnection();
-if (RServe.getConnection() != null) {
+RBackend c = RBridge.getBackend();
+if (RBridge.getBackend() != null) {
 	c.eval("A<-3");
 	/*Get the variable as double! */
-	double b = (double) c.eval("A").asDouble();
+	double b = (double) c.eval("A").firstDouble();
 	System.out.println(b);
-	RServe.print("A"); //Print variables to console.
+	RTools.print("A"); //Print variables to console.
 
 	/*We get a String from R!*/
 	c.eval("H<-'Hallo'");
-	String st = (String) c.eval("H").asString();
+	String st = (String) c.eval("H").firstString();
 	System.out.println(st);
 	
     /*A boolean value!*/
 	c.eval("bo<-TRUE");
-	REXPLogical bol = c.eval("bo");
-    boolean[]bo=bol.isTrue();
+	RValue bol = c.eval("bo");
+    boolean[]bo=bol.booleans();
 	System.out.println(bo[0]);
     
 	c.eval("a1<- c(10.456,20,15,43,76,41,25,46)");
@@ -30,7 +32,7 @@ if (RServe.getConnection() != null) {
 	c.eval("matrix<-as.matrix(frame)");// Convert to a matrix!
 	c.eval("matrix<-t(matrix)");// Transpose!
     /*We transfer a matrix as a 2d-array to Java!*/
-	double[][] frame = c.eval("matrix").asDoubleMatrix();
+	double[][] frame = c.eval("matrix").matrix();
 	for (int i = 0; i < frame.length; i++) {
 		for (int u = 0; u < frame[0].length; u++) {
 
@@ -42,5 +44,5 @@ if (RServe.getConnection() != null) {
 } 
 else {
 
-	Bio7Dialog.message("No Rserve connection available!");
+	Bio7Dialog.message("R is not running!");
 }

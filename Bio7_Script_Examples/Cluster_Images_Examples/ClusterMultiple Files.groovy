@@ -17,12 +17,12 @@ import ij.WindowManager;
 import org.eclipse.nebula.widgets.grid.Grid;
 import ij.process.ImageProcessor;
 import java.awt.image.BufferedImage;
-import static com.eco.bio7.rbridge.RServeUtil.*;
+import static com.eco.bio7.rbridge.REval.*;
 import static com.eco.bio7.rbridge.Bio7Grid.*;
 import static com.eco.bio7.batch.Bio7Dialog.*;
 import static com.eco.bio7.image.ImageMethods.*;
 
-if (RServe.isAliveDialog()) {
+if (RTools.isAliveDialog()) {
 createSheet(0, 0, "Measurements");//Create a new sheet in the Table view!
 for (int i = 0; i < 6; i++) {
 	createColumn(1,70, "State: " + (i + 1));//Create new columns!
@@ -48,7 +48,7 @@ if(files!=null){
 		evalR("cl<-kmeans(currentImage,6)",null); //Cluster the image data with the kmeans algorithm in R!
 		/*In Groovy we have to escape the $ char in strings!*/
 		evalR("print(table(cl\$cluster))",null);//Create a table in R from the results!
-		String[] values = (String[])fromR("as.character(table(cl\$cluster))").asStrings();//Get the result values as a String array!
+		String[] values = (String[])fromR("as.character(table(cl\$cluster))").strings();//Get the result values as a String array!
 		createRow(i,120);
 		/*Put the values and the scaled image in the sheet!*/
 			for (int u = 0; u < values.length; u++) {

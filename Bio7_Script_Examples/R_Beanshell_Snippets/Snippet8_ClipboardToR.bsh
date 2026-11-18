@@ -1,11 +1,12 @@
+import com.eco.bio7.rbridge.RBridge;
 /*Get data from OpenOffice, Excel, etc. from the clipboard, if available!*/
 
-if (RServe.getConnection() != null) {
-	RServe.getConnection().eval("try(clip<-read.delim(\"clipboard\"))");
+if (RBridge.getBackend() != null) {
+	RBridge.getBackend().eval("try(clip<-read.delim(\"clipboard\"))");
 	System.out.println("Data in dataframe \"clip\":");
-	RServe.print("clip");
+	RTools.print("clip");
 } 
 else {
-	RServe.isAliveDialog();
+	RTools.isAliveDialog();
 
 }

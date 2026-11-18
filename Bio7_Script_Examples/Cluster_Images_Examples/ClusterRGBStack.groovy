@@ -11,12 +11,12 @@ Please load e.g. a sequenze of RGB images as a (virtual) stack to see the result
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
-import static com.eco.bio7.rbridge.RServeUtil.*;
+import static com.eco.bio7.rbridge.REval.*;
 import static com.eco.bio7.image.ImageMethods.*;
 
 String dirOut = Bio7Dialog.directory("Choose the output directory!");
 if (dirOut != null) {
-	if (RServe.isAliveDialog()) {
+	if (RTools.isAliveDialog()) {
 		int slice = 1;
 		double timeOut;
 		long time;

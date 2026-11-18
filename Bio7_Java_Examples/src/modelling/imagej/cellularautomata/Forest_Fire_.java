@@ -30,7 +30,7 @@ public class Forest_Fire_ implements PlugIn, MouseListener {
 	private ImagePlus imp;
 	private ByteProcessor ip;
 	private int[][] grid;
-	private int w = 2600, h = 2600;
+	private int w = 1000, h = 1000;
 	private double p, f, spreadProb, initialDensity;
 	private boolean autoSpread, lightningEnabled;
 	private Random rand = new Random();

@@ -1,3 +1,4 @@
+import com.eco.bio7.rbridge.RBridge;
 /*
 In this example an R file is executed. The results can be printed again with the
 help of BeanShell!
@@ -7,7 +8,7 @@ You can, e.g. place both scripts in the scripts menu were the BeanShell script
 is calling the R Script for a more complex task. 
 */
 
-if (RServe.getConnection() != null) {
+if (RBridge.getBackend() != null) {
 	/*Paths are available in the FileRoot class!!*/
 	String fileroot = FileRoot.getFileRoot();
 
@@ -20,16 +21,16 @@ if (RServe.getConnection() != null) {
 	f = f.replace("/", "\\");
 
 	/*Transfer path to R !*/
-	RServe.getConnection().assign("fileroot", f);
+	RBridge.getBackend().assign("fileroot", f);
 
 	/*Call the script !*/
-	RServe.getConnection().eval("try(source(fileroot))");
+	RBridge.getBackend().eval("try(source(fileroot))");
 
 	System.out.println("The result is:");
 	/*Print the result to the console!*/
-	RServe.print("result");
+	RTools.print("result");
 } 
 
 else {
-	RServe.isAliveDialog();
+	RTools.isAliveDialog();
 }

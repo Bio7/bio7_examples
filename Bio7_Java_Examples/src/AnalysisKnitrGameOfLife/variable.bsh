@@ -1,13 +1,13 @@
 // Please enter your BeanShell code here!
 
-import org.rosuda.REngine.REXPLogical;
-import org.rosuda.REngine.REXPDouble;
+import com.eco.bio7.rbridge.backend.RBackend;
+import com.eco.bio7.rbridge.RBridge;
 
 
 
 int counting=1;
 
-RConnection c = RServe.getConnection();
+RBackend c = RBridge.getBackend();
 
 if (c != null) {
 	c.eval("matrixList<-list()");

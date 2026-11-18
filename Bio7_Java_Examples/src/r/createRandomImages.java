@@ -1,7 +1,7 @@
 package r;
 
 import com.eco.bio7.image.ImageMethods;
-import com.eco.bio7.rbridge.RServe;
+import com.eco.bio7.rbridge.RTools;
 import com.eco.bio7.rbridge.RState;
 
 /*
@@ -12,23 +12,23 @@ public class createRandomImages extends com.eco.bio7.compile.Model {
 
 	public void run() {
 
-		if (RServe.isAlive()) {
+		if (RTools.isAlive()) {
 			if (RState.isBusy() == false) {
 				/*
 				 * Get the relative path to the script and convert it for R
 				 * (Windows)
 				 */
-				RServe.callRScriptSilent("/Bio7_Java_Examples/src/r/randomScript.R");
+				RTools.callRScriptSilent("/Bio7_Java_Examples/src/r/randomScript.R");
 				/*
 				 * Create the image in ImageJ! 1=Byte transfer 3=Greyscale
 				 * image!
 				 */
 				ImageMethods.imageFromR(1, "imageMatrix", 2);
 			} else {
-				System.out.println("RServer is busy!");
+				System.out.println("R is busy!");
 			}
 		} else {
-			System.out.println("RServer is not alive!");
+			System.out.println("R is not running!");
 		}
 	}
 }

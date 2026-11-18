@@ -1,9 +1,9 @@
 package r;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RserveException;
+import com.eco.bio7.rbridge.backend.RBackend;
 import com.eco.bio7.rbridge.ExecuteRScript;
+import com.eco.bio7.rffm.RException;
 
 /*An example to execute R code running in a job using Raw String Literals with Java 15!*/
 
@@ -18,9 +18,10 @@ public class RExecLambdaClassAction {
 		 * interface so we can write it as a Lambda expression (essentially overrides
 		 * the evaluate method of the abstract RScriptExecuter class)!
 		 */		
-		new ExecuteRScript((RConnection con, IProgressMonitor monitor) -> {
+		/* ExecuteRScript.run: the lambda gets the connection of Bio7 (embedded R) */
+		ExecuteRScript.run((RBackend con, IProgressMonitor monitor) -> {
 			try {con.eval(rCommand);} 
-			catch (RserveException e) {e.printStackTrace();}
+			catch (RException e) {e.printStackTrace();}
 				monitor.worked(1);			
 		}, 1);
 

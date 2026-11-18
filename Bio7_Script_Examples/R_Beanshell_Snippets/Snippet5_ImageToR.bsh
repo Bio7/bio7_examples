@@ -15,6 +15,7 @@ Very slow (interpreted) in comparence with the "Compile and Run" option
 (if you transfer this data directly with compiled code!)
 see: /Bio7Examples/Java_Snippets/Java_R_Snippets/Snippet3_ImageToR.java)*/
 
+import com.eco.bio7.rbridge.RBridge;
 import ij.*;
 import ij.gui.*;
 import ij.process.*;
@@ -45,7 +46,7 @@ if (imp != null) {
 		}
 		p[z] = ip.getPixel(u,i);
 	}
-		RServe.getConnection().assign("p",p);
+		RBridge.getBackend().assign("p",p);
 	}
 	else {
 		System.out.println("Requires an 8-bit image !");

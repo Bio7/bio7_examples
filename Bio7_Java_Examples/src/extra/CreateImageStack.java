@@ -1,27 +1,28 @@
 package extra;
 
+import com.eco.bio7.rbridge.RBridge;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.StackWindow;
 import ij.io.Opener;
 import ij.process.ImageProcessor;
-import org.rosuda.REngine.Rserve.RserveException;
 import com.eco.bio7.actions.Bio7Action;
 import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
-import com.eco.bio7.image.IJTabs;
-import com.eco.bio7.rbridge.RServe;
+import com.eco.bio7.image.ui.IJTabs;
+import com.eco.bio7.rbridge.RTools;
+import com.eco.bio7.rffm.RException;
 
 /*
  This example shows how you can create dynamic(rendered)graphs with the
  R application which are added autmatically in the ImageJ view as a stack
  (move the scrollbar to see the animated result)!.
  The stack then can be saved as an *.avi file (Old example - you can now use the general
- plot function or the special Bio7Rserve API!).
+ plot function or the R API of Bio7!).
 
  Important:
- For this example the Rserve application has to be started!
+ For this example R has to be started!
  Furthermore the setup method has to be executed(Scripts->General_Scripts->Setup)!
 
  This example creates R plots. This plots then are opened
@@ -68,15 +69,15 @@ public class CreateImageStack extends com.eco.bio7.compile.Model {
 
 			/*-----------Here you can place your custom plot!---------------------------*/
 
-			RServe.getConnection().eval("x<-c(1:100)");
-			RServe.getConnection().eval("y<-c(1:100)");
-			RServe.getConnection().eval("z<-matrix(runif(1:10000),100,100)");
-			RServe.getConnection().eval("image(x,y,z);");
+			RBridge.getBackend().eval("x<-c(1:100)");
+			RBridge.getBackend().eval("y<-c(1:100)");
+			RBridge.getBackend().eval("z<-matrix(runif(1:10000),100,100)");
+			RBridge.getBackend().eval("image(x,y,z);");
 
 			/*------------------------------------------------------------------------*/
-		} catch (RserveException e) {
+		} catch (RException e) {
 
-			System.out.println(e.getRequestErrorDescription());
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -87,7 +88,7 @@ public class CreateImageStack extends com.eco.bio7.compile.Model {
 	}
 
 	public void openPlot() {
-		if (RServe.isAlive()) {
+		if (RTools.isAlive()) {
 			/* The root of the workspace */
 			
 			/* Get the path and convert it for R (Windows) */
@@ -99,21 +100,21 @@ public class CreateImageStack extends com.eco.bio7.compile.Model {
 			/* Transfer path to R ! */
 
 			try {
-				RServe.getConnection().assign("fileroot", f);
+				RBridge.getBackend().assign("fileroot", f);
 				/* We create a *.png file in the project! */
-				RServe.getConnection().eval(
+				RBridge.getBackend().eval(
 						"try(png(fileroot,width=" + w + ",height=" + h + "))");
 
 				plotInstructions();
 
 				/* We close the device! */
-				RServe.getConnection().eval("dev.off();");
+				RBridge.getBackend().eval("dev.off();");
 
 			}
 
-			catch (RserveException e) {
+			catch (RException e) {
 
-				System.out.println(e.getRequestErrorDescription());
+				System.out.println(e.getMessage());
 			}
 			/* Now we open the plot in ImageJ as a tab! */
 
@@ -135,14 +136,14 @@ public class CreateImageStack extends com.eco.bio7.compile.Model {
 		} else {
 
 			Bio7Action.stopCalculation();
-			Bio7Dialog.message("Rserve application is not alive!");
-			System.out.println("Rserve is not alive!");
+			Bio7Dialog.message("R is not running!");
+			System.out.println("R is not running!");
 
 		}
 	}
 
 	public void setupPlot() {
-		if (RServe.isAlive()) {
+		if (RTools.isAlive()) {
 			/* The root of the workspace */
 			//root = FileRoot.getFileRoot();
 			/* Get the path and convert it for R(Windows) */
@@ -154,21 +155,21 @@ public class CreateImageStack extends com.eco.bio7.compile.Model {
 			/* Transfer path to R ! */
 
 			try {
-				RServe.getConnection().assign("fileroot", f);
+				RBridge.getBackend().assign("fileroot", f);
 				/* We create a *.png file in the project! */
-				RServe.getConnection().eval(
+				RBridge.getBackend().eval(
 						"try(png(fileroot,width=" + w + ",height=" + h + "))");
 
 				plotInstructions();
 
 				/* We close the device! */
-				RServe.getConnection().eval("dev.off();");
+				RBridge.getBackend().eval("dev.off();");
 
 			}
 
-			catch (RserveException e) {
+			catch (RException e) {
 
-				System.out.println(e.getRequestErrorDescription());
+				System.out.println(e.getMessage());
 			}
 			/* Now we open the plot in ImageJ as a tab! */
 
@@ -198,7 +199,7 @@ public class CreateImageStack extends com.eco.bio7.compile.Model {
 
 			Bio7Action.stopCalculation();
 
-			System.out.println("Rserve is not alive!");
+			System.out.println("R is not running!");
 
 		}
 	}

@@ -41,27 +41,13 @@ public class PanelOverlay extends com.eco.bio7.compile.Model {
 			clicked = !clicked;
 			counter = 0;
 		}
-		if (clicked) {
-			if (SpatialUtil.isSplitView()) {
-				/*
-				 * The following method avoids actions if the split-screen is
-				 * active! The overlay panel is not drawn in the small
-				 * split-screen panel. If true the overlay is drawn in the small
-				 * panel!
-				 */
-				if (SpatialUtil.isSplitPanelDrawing() == false) {
-					if (infoOverlay != null) {
-						showOverlayInfo(gl);
-						counter++;
-					}
-				}
-			} else {
-				if (infoOverlay != null) {
-					showOverlayInfo(gl);
-					counter++;
-				}
-
-			}
+		/*
+		 * The overlay panel is not drawn in the small view of the split view
+		 * (isSplitPanelDrawing is false without the split view)
+		 */
+		if (clicked && !SpatialUtil.isSplitPanelDrawing() && infoOverlay != null) {
+			showOverlayInfo(gl);
+			counter++;
 		}
 
 	}

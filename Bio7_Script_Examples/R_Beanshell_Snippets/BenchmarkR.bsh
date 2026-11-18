@@ -1,0 +1,52 @@
+import com.eco.bio7.rbridge.backend.RBackend;
+import com.eco.bio7.rbridge.RBridge;
+/*
+An R benchmark test with Java and BeanShell!
+*/
+//import com.eco.bio7.rbridge.RState;
+
+if(RTools.isAliveDialog()){
+if(RState.isBusy()==false){	
+RBackend c=RBridge.getBackend();
+System.out.println("1000000 random numbers in R:");
+RTools.print("system.time(a<-runif(1000000)*10000)");
+System.out.println("The call from Java:");
+long time = System.currentTimeMillis();
+c.eval("runif(1000000)*10000");
+double timeOut = (double)(System.currentTimeMillis() - time)/1000;
+System.out.println("Time call Java: (seconds) " + timeOut);
+
+time = System.currentTimeMillis();
+double []random = (double[]) c.eval("runif(1000000)*10000").doubles();
+
+//double random = (double) c.eval("random").firstDouble();
+timeOut = (double)(System.currentTimeMillis() - time)/1000;
+System.out.println("Time call+data transfer to Java: (seconds) " + timeOut);
+
+System.out.println("Pure data transfer 10000000 numbers:");
+long time = System.currentTimeMillis();
+double []fibonacci = (double[]) c.eval("a").doubles();
+double timeOut = (double)(System.currentTimeMillis() - time)/1000;
+System.out.println("Time transfer Java: (seconds) " + timeOut);
+c.eval("remove(a)");
+
+
+RBridge.getBackend().eval("a <- 0");
+RBridge.getBackend().eval("b <- 0");
+RBridge.getBackend().eval("phi <- 1.6180339887498949");
+RBridge.getBackend().eval("a <- floor(runif(750000)*1000)");
+RBridge.getBackend().eval("timing <- system.time(b <- (phi^a - (-phi)^(-a))/sqrt(5))");
+System.out.println("750000 Fibonacci Numbers in R: ");
+RTools.print("timing");
+
+time = System.currentTimeMillis();
+RBridge.getBackend().eval("b <- (phi^a - (-phi)^(-a))/sqrt(5)");
+double []fibonacci = (double[]) c.eval("b").doubles();
+timeOut = (double)(System.currentTimeMillis() - time)/1000;
+System.out.println("Time call+data transfer to Java: (seconds) " + timeOut);
+c.eval("remove(a);remove(b);remove(phi);remove(timing)");
+}
+else{
+	System.out.println("R is busy!");
+}
+}

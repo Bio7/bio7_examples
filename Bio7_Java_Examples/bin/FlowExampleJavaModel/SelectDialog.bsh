@@ -1,0 +1,8 @@
+/*A non blocking dialog for information.
+Pauses the flow as long as not confirmed ! */
+if(Bio7Dialog.getOS().equals("Windows")){
+Bio7Dialog.selection("Please select two states !");
+}
+else{
+Bio7Dialog.linuxSelection("Please select two states !");	
+}

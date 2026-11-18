@@ -1,10 +1,11 @@
+import com.eco.bio7.rbridge.RBridge;
 /*This example checks if a library is available in R.*/
-if (RServe.getConnection() != null) {
-	if (!RServe.getConnection().eval("require(spe)").isTrue()[0]) {
+if (RBridge.getBackend() != null) {
+	if (!RBridge.getBackend().eval("require(spe)").isTrue()) {
 
 		Bio7Dialog.message("Cannot load 'spe' package!");
 	}
 }
 else {
-	Bio7Dialog.message("No Rserve connection available!");
+	Bio7Dialog.message("R is not running!");
 }

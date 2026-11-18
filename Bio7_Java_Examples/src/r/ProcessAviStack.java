@@ -1,7 +1,7 @@
 package r;
 
 import com.eco.bio7.image.ImageMethods;
-import com.eco.bio7.rbridge.RServe;
+import com.eco.bio7.rbridge.RTools;
 
 import ij.IJ;
 
@@ -24,8 +24,8 @@ public class ProcessAviStack extends com.eco.bio7.compile.Model {
 		/* Transfer as integer! ->0=double, 1=integer, 2=byte, 3=RGB */
 		ImageMethods.imageToR("current", false, 1, null);
 		System.out.println("Mean: ");
-		RServe.print("mean(as.integer(current))");
-		// RServe.print("mean(fft(as.integer(current)))");
+		RTools.print("mean(as.integer(current))");
+		// RTools.print("mean(fft(as.integer(current)))");
 		System.out.println();
 		timeOut = (double) (System.currentTimeMillis() - time) / 1000;
 		System.out.println("Time: (seconds) " + timeOut + " Fps: " + 1

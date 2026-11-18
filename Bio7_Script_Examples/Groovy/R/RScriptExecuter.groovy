@@ -1,7 +1,6 @@
 /*An example to execute R code interactive with SWT dialogs in a job and instant plotting support!*/
+import com.eco.bio7.rbridge.backend.RBackend;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RserveException;
 import com.eco.bio7.rbridge.ExecuteRScript;
 import com.eco.bio7.rbridge.RScriptExecuter;
 import com.eco.bio7.rbridge.RScriptExecuterInterface;
@@ -50,9 +49,9 @@ histCommand = """
 runifCommand = """
 	print(runif(100))
 	""";
-/*Interface to Rserve running in a job with progress indication!*/
+/*Interface to R running in a job with progress indication!*/
 new ExecuteRScript(new RScriptExecuter() {
-	public void evaluate(RConnection con, IProgressMonitor monitor) {
+	public void evaluate(RBackend con, IProgressMonitor monitor) {
 		decision1 = Bio7Dialog.decision("Print random data (runif)?");
 		if (decision1) {
 			con.eval(runifCommand);
@@ -68,11 +67,11 @@ new ExecuteRScript(new RScriptExecuter() {
 			con.eval(scanCommand);
 			con.eval(boxplotCommand);
 			/*Display the plot instantly instead to plot all at the end!*/
-			RServeUtil.displayPlotEvent();
+			REval.displayPlotEvent();
 			decision3 = Bio7Dialog.decision("Plot data as histogram, too?");
 			if (decision3) {
 				con.eval(histCommand);
-				RServeUtil.displayPlotEvent();
+				REval.displayPlotEvent();
 
 			}
 		}
@@ -80,7 +79,7 @@ new ExecuteRScript(new RScriptExecuter() {
 		decision4 = Bio7Dialog.decision("Plot an loop example as a stack?");
 		if (decision4) {
 			con.eval(loopPlotCommand);
-			RServeUtil.displayPlotEvent();
+			REval.displayPlotEvent();
 
 		}
 		monitor.worked(1);
@@ -88,7 +87,7 @@ new ExecuteRScript(new RScriptExecuter() {
 		if (decision5) {
 			for (int i = 0; i < 5; i++) {
 				con.eval(individualLoopPlotCommand);
-				RServeUtil.displayPlotEvent();
+				REval.displayPlotEvent();
 			}
 		}
 		monitor.worked(1);

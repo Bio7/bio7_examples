@@ -1,24 +1,25 @@
 package opengl.rdata;
 
+import com.eco.bio7.rbridge.backend.RBackend;
+import com.eco.bio7.rbridge.RBridge;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
-import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RserveException;
 
-import com.eco.bio7.rbridge.RServe;
+import com.eco.bio7.rbridge.RTools;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import static com.eco.bio7.spatial.SpatialUtil.*;
+import com.eco.bio7.rffm.RException;
+import com.eco.bio7.rffm.RTypeException;
 import static com.jogamp.opengl.GL2.*; 
 
 /*
 This example creates random (normal distributed) numbers dynamically 
 in R and transfers them to the Space view.
 In this example we draw points primitives!
-Rserve has to be alive!
+R has to run!
 */
 
 public class RDataVisualizationPointsPrimitive extends com.eco.bio7.compile.Model {
@@ -37,23 +38,23 @@ public void setup(GL2 gl, GLU glu, GLUT glut) {
 }
 
 public void createRData(){
-	if (RServe.isAlive()) {
+	if (RTools.isAlive()) {
 		try {
 			/*Create the random data in R! This time we use 
 			integers to save memory!*/
 			try{
-			RConnection connection = RServe.getConnection();
-			x = (int[]) connection.eval("x<-as.integer(rnorm(100000)*100)").asIntegers();
-			y = (int[]) connection.eval("y<-as.integer(rnorm(100000)*100)").asIntegers();
-			z = (int[]) connection.eval("z<-as.integer(rnorm(100000)*100)").asIntegers();
+			RBackend connection = RBridge.getBackend();
+			x = (int[]) connection.eval("x<-as.integer(rnorm(100000)*100)").ints();
+			y = (int[]) connection.eval("y<-as.integer(rnorm(100000)*100)").ints();
+			z = (int[]) connection.eval("z<-as.integer(rnorm(100000)*100)").ints();
 			}
-			catch (REXPMismatchException e) {
+			catch (RTypeException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-		} catch (RserveException e) {
+		} catch (RException e) {
 
-			System.out.println(e.getRequestErrorDescription());
+			System.out.println(e.getMessage());
 		}
 	}
 	

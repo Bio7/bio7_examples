@@ -1,13 +1,14 @@
 package opengl.rdata;
 
+import com.eco.bio7.rbridge.RBridge;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
-import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.Rserve.RserveException;
-import com.eco.bio7.rbridge.RServe;
+import com.eco.bio7.rbridge.RTools;
 import com.jogamp.opengl.util.gl2.GLUT;
 import static com.jogamp.opengl.GL2.*;
+import com.eco.bio7.rffm.RException;
+import com.eco.bio7.rffm.RTypeException;
 
 /*
  A simple example which draws a line plot with data from R.
@@ -19,20 +20,20 @@ public class RDataVisualization extends com.eco.bio7.compile.Model {
 
 	public void setup(GL2 gl, GLU glu, GLUT glut) {
 
-		if (RServe.isAlive()) {
+		if (RTools.isAlive()) {
 			try {
 
 				/* We produce some random data with R! */
-				RServe.getConnection().eval("z<-runif(500)*200");
+				RBridge.getBackend().eval("z<-runif(500)*200");
 				try {
-					z = (double[]) RServe.getConnection().eval("z").asDoubles();
-				} catch (REXPMismatchException e) {
+					z = (double[]) RBridge.getBackend().eval("z").doubles();
+				} catch (RTypeException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} catch (RserveException e) {
+			} catch (RException e) {
 
-				System.out.println(e.getRequestErrorDescription());
+				System.out.println(e.getMessage());
 			}
 		}
 

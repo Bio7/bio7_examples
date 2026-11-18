@@ -1,6 +1,7 @@
 /*
 * The example demonstrates the use of a custom camera and tracks the motion
-* of a sphere in a swarm model! Please invoke the setup method in the "Options Space" view for a correct display.
+* of a glider in a swarm model (each boid a glider of triangles: it points in its
+* direction of flight, climbs, dives and banks into turns)! Please invoke the setup method in the "Options Space" view for a correct display.
 * Then Invoke the Play/Pause action to draw the OpenGL commands.
 * Enable the "Custom Camera" view option in the "Camera" tab (optional the "Split View" option) 
 * to see the result of a custom camera!
@@ -56,6 +57,7 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 
 	/* Start after compilation if run action is active! */
 	public BoidSphereModel() {
+		
 		setup();
 	}
 
@@ -63,7 +65,8 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 		setupModel();
 	}
 
-	private void setupModel() {
+	private void setupModel() {		
+		Work.closePerspective("3d");
 		Work.openPerspective("com.eco.bio7.CustomPerspective");
 		Work.openView("com.eco.bio7.spatial");
 		// Work.openPerspective("com.eco.bio7.perspective_3d");
@@ -73,7 +76,8 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 		// Reset spatial rotations and set top-down perspective
 		SpatialUtil.resetRotation();
 		SpatialUtil.setRotationX(-90.0f);
-
+		SpatialUtil.setSplitView(true);
+		SpatialUtil.setCustomCamera(true);
 		// Initialize Boid population
 		boids = new ArrayList<Boid>();
 		DoubleUniform uni = new DoubleUniform(-300, 300, twist);
@@ -115,6 +119,9 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 
 	public void run(GL2 gl, GLU glu, GLUT glut) {
 		gl.glEnable(GL_COLOR_MATERIAL);
+		/* Both sides of the wings lit (a glider is open, not a closed body) */
+		gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
+		gl.glEnable(GL2.GL_NORMALIZE);
 
 		// Execute boid behavior and rendering
 		for (Boid b : boids) {
@@ -142,13 +149,27 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 		}
 	}
 
+	/*
+	 * The glider of a boid (nose along +x, wings in the x-y plane, the fin up +z),
+	 * in units of the size ("Size" in the settings): a dart with a ridge on the
+	 * top and the bottom, a notch at the tail and a fin.
+	 */
+	private static final double[] NOSE = { 2.2, 0, 0 }, LEFT = { -1.3, 1.7, 0 }, RIGHT = { -1.3, -1.7, 0 }, TAIL = { -0.7, 0, 0 },
+			TOP = { -0.2, 0, 0.28 }, BOTTOM = { -0.2, 0, -0.22 }, FIN = { -1.25, 0, 0.95 };
+
 	class Boid {
 		double x, y, z, vx, vy, vz, ax, ay;
+		/* The heading of the last frame and the bank (the roll into a turn, degrees) */
+		double lastYaw = Double.NaN, bank;
+		/* Each boid a shade of blue-cyan */
+		final float[] color;
 
 		Boid(double x, double y, double z) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
+			java.awt.Color c = java.awt.Color.getHSBColor((float) (0.50 + Math.random() * 0.12), 0.75f, 0.95f);
+			color = c.getRGBColorComponents(null);
 			double angle = Math.random() * Math.PI * 2;
 			this.vx = Math.cos(angle);
 			this.vy = Math.sin(angle);
@@ -191,11 +212,56 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 		}
 
 		void render(GL2 gl, GLUT glut) {
+			/* The direction of the flight (y inverted as the position) */
+			double dx = vx, dy = -vy, dz = vz;
+			double yaw = Math.toDegrees(Math.atan2(dy, dx));
+			double pitch = Math.toDegrees(Math.atan2(dz, Math.hypot(dx, dy)));
+			/* Banking: the glider rolls into a turn (smoothed) */
+			if (!Double.isNaN(lastYaw)) {
+				double turn = yaw - lastYaw;
+				if (turn > 180) {
+					turn -= 360;
+				} else if (turn < -180) {
+					turn += 360;
+				}
+				bank = 0.85 * bank + 0.15 * Math.max(-50, Math.min(50, -turn * 12));
+			}
+			lastYaw = yaw;
+
 			gl.glPushMatrix();
 			gl.glTranslated(x, -y, z); // Bio7 Y-Inversion
-			gl.glColor3f(0.2f, 0.5f, 1.0f);
-			glut.glutSolidSphere(radius, 16, 16);
+			gl.glRotated(yaw, 0, 0, 1);
+			gl.glRotated(-pitch, 0, 1, 0);
+			gl.glRotated(bank, 1, 0, 0);
+			gl.glScaled(radius, radius, radius);
+			gl.glBegin(GL2.GL_TRIANGLES);
+			/* The top (the color of the boid) */
+			gl.glColor3f(color[0], color[1], color[2]);
+			triangle(gl, NOSE, LEFT, TOP);
+			triangle(gl, NOSE, TOP, RIGHT);
+			triangle(gl, LEFT, TAIL, TOP);
+			triangle(gl, TOP, TAIL, RIGHT);
+			/* The bottom (darker) */
+			gl.glColor3f(color[0] * 0.45f, color[1] * 0.45f, color[2] * 0.55f);
+			triangle(gl, NOSE, BOTTOM, LEFT);
+			triangle(gl, NOSE, RIGHT, BOTTOM);
+			triangle(gl, LEFT, BOTTOM, TAIL);
+			triangle(gl, BOTTOM, RIGHT, TAIL);
+			/* The fin (light) */
+			gl.glColor3f(0.85f + color[0] * 0.15f, 0.9f, 1.0f);
+			triangle(gl, TOP, TAIL, FIN);
+			gl.glEnd();
 			gl.glPopMatrix();
+		}
+
+		/* A triangle with its normal (for the lighting) */
+		private void triangle(GL2 gl, double[] a, double[] b, double[] c) {
+			double ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
+			double wx = c[0] - a[0], wy = c[1] - a[1], wz = c[2] - a[2];
+			gl.glNormal3d(uy * wz - uz * wy, uz * wx - ux * wz, ux * wy - uy * wx);
+			gl.glVertex3d(a[0], a[1], a[2]);
+			gl.glVertex3d(b[0], b[1], b[2]);
+			gl.glVertex3d(c[0], c[1], c[2]);
 		}
 
 		// --- Steering Logic (Separate, Align, Cohesion) ---

@@ -1,28 +1,29 @@
 package modelling.random;
 
+import com.eco.bio7.rbridge.backend.RBackend;
+import com.eco.bio7.rbridge.RBridge;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.StackWindow;
 import ij.io.Opener;
 import ij.process.ImageProcessor;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RserveException;
 import com.eco.bio7.actions.Bio7Action;
 import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
-import com.eco.bio7.image.IJTabs;
-import com.eco.bio7.rbridge.RServe;
+import com.eco.bio7.image.ui.IJTabs;
+import com.eco.bio7.rbridge.RTools;
+import com.eco.bio7.rffm.RException;
 
 
 /*
 This example shows how you can create dynamic(rendered)graphs with the
-R application (Old example - you can now use the general plot function or the special Bio7Rserve API!).
+R application (Old example - you can now use the general plot function or the R API of Bio7!).
 For the plot i slightly changed an example from "The R book" of Michael Crawley
 (2007)which produces a random walk with R plots (move the scrollbar to see the 
 animated result!).
 
-For this example the Rserve application has to be started!
+For this example R has to be started!
 Furthermore the setup method (Scripts->General_Scripts->Setup)has to be executed!
 
 This example creates R plots. This plots then are opened
@@ -63,7 +64,7 @@ public void setup(){
 
 public void plotSetup(){
 	try {
-		    RConnection c=RServe.getConnection();
+		    RBackend c=RBridge.getBackend();
 		    
 	        c.eval("plot(0:100,0:100,type=\"n\",xlab=\"\",ylab=\"\")");
 	        c.eval("x<-y<-50");
@@ -71,9 +72,9 @@ public void plotSetup(){
 	        c.eval("yp<-50");
 	        c.eval("points(50,50,pch=16,cex=1.5)");
 	}
-	        catch (RserveException e) {
+	        catch (RException e) {
 
-			System.out.println(e.getRequestErrorDescription());
+			System.out.println(e.getMessage());
 		}
 }
 
@@ -83,7 +84,7 @@ public void plotInstructions(){
 	
 	/*-----------Here we update plot!---------------------------*/
 	
-	       RConnection c=RServe.getConnection();
+	       RBackend c=RBridge.getBackend();
 	
 	        c.eval("plot(0:100,0:100,type=\"n\",xlab=\"\",ylab=\"\")");
             c.eval("points(50,50,pch=16,cex=1.5)");
@@ -103,9 +104,9 @@ public void plotInstructions(){
 
 	/*------------------------------------------------------------------------*/
 	}
-	catch (RserveException e) {
+	catch (RException e) {
 
-			System.out.println(e.getRequestErrorDescription());
+			System.out.println(e.getMessage());
 		}
 }
 
@@ -116,7 +117,7 @@ public void run() {
 }
 
 public void openPlot() {
-	if (RServe.isAlive()) {
+	if (RTools.isAlive()) {
 		/*The root of the workspace*/
 		//root = FileRoot.getFileRoot();
 		/*Get the path and convert it for R (Windows)*/
@@ -128,21 +129,21 @@ public void openPlot() {
 		/*Transfer path to R !*/
 
 		try {
-			RServe.getConnection().assign("fileroot", f);
+			RBridge.getBackend().assign("fileroot", f);
 			/*We create a *.png file in the project!*/
-			RServe.getConnection().eval(
+			RBridge.getBackend().eval(
 				"try(png(fileroot,width="+w+",height="+h+"))");
 
 			plotInstructions();
 
 			/*We close the device!*/
-			RServe.getConnection().eval("dev.off();");
+			RBridge.getBackend().eval("dev.off();");
 
 		}
 
-		catch (RserveException e) {
+		catch (RException e) {
 
-			System.out.println(e.getRequestErrorDescription());
+			System.out.println(e.getMessage());
 		}
 		/*Now we open the plot in ImageJ as a tab!*/
 		
@@ -169,14 +170,14 @@ public void openPlot() {
 	} else {
 
 		Bio7Action.stopCalculation();
-		Bio7Dialog.message("Rserve application is not alive!");
-		System.out.println("Rserve is not alive!");
+		Bio7Dialog.message("R is not running!");
+		System.out.println("R is not running!");
 
 	}
 }
 
 public void setupPlot() {
-	if (RServe.isAlive()) {
+	if (RTools.isAlive()) {
 		/*The root of the workspace*/
 		//root = FileRoot.getFileRoot();
 		/*Get the path and convert it for R (Windows)*/
@@ -188,22 +189,22 @@ public void setupPlot() {
 		/*Transfer path to R !*/
 
 		try {
-			RServe.getConnection().assign("fileroot", f);
+			RBridge.getBackend().assign("fileroot", f);
 			/*We create a *.png file in the project!*/
-			RServe.getConnection().eval(
+			RBridge.getBackend().eval(
 				"try(png(fileroot,width="+w+",height="+h+"))");
 
             /*Here we call the setup method for the dynamic plot!*/
 			plotSetup();
 
 			/*We close the device!*/
-			RServe.getConnection().eval("dev.off();");
+			RBridge.getBackend().eval("dev.off();");
 
 		}
 
-		catch (RserveException e) {
+		catch (RException e) {
 
-			System.out.println(e.getRequestErrorDescription());
+			System.out.println(e.getMessage());
 		}
 		/*Now we open the plot in ImageJ as a tab!*/
 

@@ -1,0 +1,100 @@
+---
+title: "Statistical Plots with seaborn, plotnine and pandas"
+output: html_document
+---
+
+# Statistical plots
+
+seaborn, plotnine (the grammar of graphics of ggplot2 in Python), pandas and
+statsmodels draw with matplotlib: the plots are shown below the chunks (and in
+the rendered document). Needs seaborn, plotnine and statsmodels (*Python
+Packages*). The data set penguins is part of seaborn (downloaded once).
+
+```{python setup}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set_theme(style="whitegrid")
+try:
+    penguins = sns.load_dataset("penguins").dropna()
+except Exception:
+    # Offline: similar data
+    rng = np.random.default_rng(1)
+    species = np.repeat(["Adelie", "Chinstrap", "Gentoo"], 110)
+    bill = np.concatenate([rng.normal(m, 2.5, 110) for m in (38.8, 48.8, 47.5)])
+    flipper = np.concatenate([rng.normal(m, 6.5, 110) for m in (190, 196, 217)])
+    mass = np.concatenate([rng.normal(m, 450, 110) for m in (3700, 3730, 5080)])
+    penguins = pd.DataFrame({"species": species, "bill_length_mm": bill, "flipper_length_mm": flipper,
+                             "body_mass_g": mass, "sex": np.tile(["Male", "Female"], 165)})
+penguins.groupby("species")[["bill_length_mm", "flipper_length_mm", "body_mass_g"]].mean().round(1)
+```
+
+## seaborn
+
+```{python}
+sns.pairplot(penguins, hue="species", vars=["bill_length_mm", "flipper_length_mm", "body_mass_g"],
+             height=2.2, plot_kws={"s": 18})
+```
+
+```{python}
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+sns.violinplot(data=penguins, x="species", y="body_mass_g", hue="sex", split=True, ax=axes[0])
+axes[0].set_title("Body mass")
+sns.regplot(data=penguins, x="flipper_length_mm", y="body_mass_g", scatter_kws={"s": 12}, ax=axes[1])
+axes[1].set_title("Body mass ~ flipper length")
+fig.tight_layout()
+```
+
+```{python}
+corr = penguins.select_dtypes("number").corr()
+sns.heatmap(corr, annot=True, fmt=".2f", cmap="vlag", vmin=-1, vmax=1, square=True)
+plt.title("Correlations")
+plt.show()
+```
+
+## plotnine (grammar of graphics)
+
+A plotnine plot is drawn with `p.draw()` (or `print(p)` / `p.show()`).
+
+```{python}
+from plotnine import ggplot, aes, geom_point, geom_smooth, facet_wrap, labs, theme_bw
+
+p = (ggplot(penguins, aes("flipper_length_mm", "body_mass_g", color="species"))
+     + geom_point(alpha=0.7)
+     + geom_smooth(method="lm", se=False)
+     + facet_wrap("~sex")
+     + labs(x="Flipper length (mm)", y="Body mass (g)", title="plotnine")
+     + theme_bw())
+p.draw(show=True)
+```
+
+## pandas
+
+```{python}
+ax = penguins.pivot_table(index="species", columns="sex", values="body_mass_g").plot.bar(rot=0)
+ax.set_ylabel("Mean body mass (g)")
+plt.show()
+```
+
+## statsmodels: a linear model and its diagnostics
+
+```{python}
+import statsmodels.formula.api as smf
+
+model = smf.ols("body_mass_g ~ flipper_length_mm + C(species)", data=penguins).fit()
+print(model.summary().tables[1])
+```
+
+```{python}
+import statsmodels.api as sm
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+axes[0].scatter(model.fittedvalues, model.resid, s=10)
+axes[0].axhline(0, color="gray")
+axes[0].set(xlabel="Fitted", ylabel="Residual", title="Residuals")
+sm.qqplot(model.resid, line="45", fit=True, ax=axes[1])
+axes[1].set_title("Q-Q plot")
+fig.tight_layout()
+```

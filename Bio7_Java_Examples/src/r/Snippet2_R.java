@@ -1,8 +1,9 @@
 package r;
 
-import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.Rserve.RserveException;
-import com.eco.bio7.rbridge.RServe;
+import com.eco.bio7.rbridge.RBridge;
+import com.eco.bio7.rbridge.RTools;
+import com.eco.bio7.rffm.RException;
+import com.eco.bio7.rffm.RTypeException;
 
 /* 
 This Snippet is an easy example how to get variables
@@ -13,27 +14,27 @@ public class Snippet2_R extends com.eco.bio7.compile.Model {
 
 public void run() {
 	double[] result = null;
-	if (RServe.isAlive()) {
+	if (RTools.isAlive()) {
 		try {
-			RServe.getConnection().eval("A<-c(runif(100)*100)");
+			RBridge.getBackend().eval("A<-c(runif(100)*100)");
 			try {
 				//get the result from R
-				result = (double[]) RServe.getConnection().eval("summary(A)")
-					.asDoubles();
+				result = (double[]) RBridge.getBackend().eval("summary(A)")
+					.doubles();
 
-			} catch (REXPMismatchException e) {
+			} catch (RTypeException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} catch (RserveException e) {
+		} catch (RException e) {
 
-			System.out.println(e.getRequestErrorDescription());
+			System.out.println(e.getMessage());
 		}
 
 		for (int i = 0; i < result.length; i++) {
 			System.out.println(result[i] + " ");
 		}
 	} else {
-		System.out.println("No connection to Rserve available!");
+		System.out.println("R is not running!");
 	}
 }}

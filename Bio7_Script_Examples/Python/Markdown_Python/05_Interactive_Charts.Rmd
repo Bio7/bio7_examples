@@ -1,0 +1,102 @@
+---
+title: "Interactive Charts in Python Chunks"
+output: html_document
+---
+
+# Interactive charts
+
+Interactive charts of Python (zoom, pan, hover) are shown in the **Browser view**
+of Bio7 when a chunk runs in the editor (▶ Run). When the document is rendered,
+they are embedded in the HTML document. A chart is shown with its `show()`
+method, with `bio7.show_html(chart)` or as the last expression of a chunk.
+
+Each section needs its package (install it with *Python Packages*): plotly,
+altair, bokeh, folium, hvplot (with holoviews). A chunk of a package which is
+not installed shows the hint how to install it (`error=TRUE`: the document is
+rendered anyway). The charts load their
+JavaScript libraries from the internet (a CDN).
+
+```{python data}
+import numpy as np
+import pandas as pd
+
+rng = np.random.default_rng(3)
+n = 200
+df = pd.DataFrame({
+    "length": rng.normal(10, 2, n),
+    "width": rng.normal(4, 1, n),
+    "group": rng.choice(["A", "B", "C"], n),
+})
+df["weight"] = 0.8 * df["length"] * df["width"] + rng.normal(0, 3, n)
+df.head()
+```
+
+## plotly
+
+```{python plotly, error=TRUE}
+import plotly.express as px
+
+fig = px.scatter(df, x="length", y="weight", color="group", size="width",
+                 hover_data=["width"], title="Weight by length (plotly)")
+fig.show()
+```
+
+```{python plotly-3d, error=TRUE}
+px.scatter_3d(df, x="length", y="width", z="weight", color="group",
+              title="Three dimensions (rotate with the mouse)")
+```
+
+## altair (Vega-Lite)
+
+A selection in the left chart filters the right one.
+
+```{python altair, error=TRUE}
+import altair as alt
+
+brush = alt.selection_interval()
+points = alt.Chart(df).mark_point().encode(
+    x="length", y="weight",
+    color=alt.condition(brush, "group", alt.value("lightgray"))
+).add_params(brush).properties(width=320, height=260)
+bars = alt.Chart(df).mark_bar().encode(
+    x="count()", y="group", color="group"
+).transform_filter(brush).properties(width=320, height=260)
+points | bars
+```
+
+## bokeh
+
+```{python bokeh, error=TRUE}
+from bokeh.plotting import figure, show
+from bokeh.models import HoverTool
+
+p = figure(title="Weight by width (bokeh)", width=640, height=380, tools="pan,wheel_zoom,box_zoom,reset")
+colors = {"A": "#1f77b4", "B": "#ff7f0e", "C": "#2ca02c"}
+for g, d in df.groupby("group"):
+    p.scatter(d["width"], d["weight"], size=7, alpha=0.7, color=colors[g], legend_label=g)
+p.add_tools(HoverTool(tooltips=[("width", "@x{0.0}"), ("weight", "@y{0.0}")]))
+show(p)
+```
+
+## folium (Leaflet maps)
+
+```{python folium, error=TRUE}
+import folium
+
+m = folium.Map(location=[47.66, 9.18], zoom_start=10)
+sites = {"Konstanz": (47.66, 9.18), "Friedrichshafen": (47.65, 9.48), "Bregenz": (47.50, 9.75)}
+for name, (lat, lon) in sites.items():
+    folium.CircleMarker([lat, lon], radius=8, popup=name, color="crimson", fill=True).add_to(m)
+m
+```
+
+## hvplot (holoviews)
+
+The pandas DataFrame plots with `hvplot` (bokeh in the browser).
+
+```{python hvplot, error=TRUE}
+import hvplot.pandas  # adds df.hvplot
+
+df.hvplot.scatter(x="length", y="weight", by="group", width=640, height=380,
+                  title="Weight by length (hvplot)")
+```

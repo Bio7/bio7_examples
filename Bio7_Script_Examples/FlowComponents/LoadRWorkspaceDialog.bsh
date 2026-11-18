@@ -1,10 +1,11 @@
+import com.eco.bio7.rbridge.RBridge;
 /*
 This Snippet can be used as a template for opening files
 This example opens a R workspace.
  */
 
 
-if (RServe.getConnection() != null) {
+if (RBridge.getBackend() != null) {
 
 	String file = Bio7Dialog.openFile();
 
@@ -14,17 +15,17 @@ if (RServe.getConnection() != null) {
 	String load = "load(file =\"" + selected + "\")";
 	try {
 		
-		RServe.getConnection().eval("try(" + load + ")");
+		RBridge.getBackend().eval("try(" + load + ")");
 
 	} catch (RSrvException e) {
 
-		System.out.println(e.getRequestErrorDescription());
+		System.out.println(e.getMessage());
 	}
 
 }
 
 else {
-	Bio7Dialog.message("No Rserve connection available !");
+	Bio7Dialog.message("R is not running!");
 }
 
 	

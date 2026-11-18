@@ -8,6 +8,8 @@ import com.jogamp.opengl.util.gl2.GLUT;
 
 
 /*
+The Collada library (jcollada) is not part of Bio7: it is licensed under the GPL-3.0
+(Bio7: EPL-2.0) and needs a version for JOGL 2 (com.jogamp.opengl).
 Please install the Collada library in the JRE and recalculate the Java classpath
 in the context menu of the Bio7 Navigator view!
 Website: https://github.com/Meanz/jcollada

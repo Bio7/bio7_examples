@@ -1,2 +1,2 @@
-while (RServe.isConnected()==false){
+while (RTools.isConnected()==false){
 }

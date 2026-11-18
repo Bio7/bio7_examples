@@ -1,18 +1,19 @@
 package extra;
 
+import com.eco.bio7.rbridge.RBridge;
 import ij.io.Opener;
 import javax.swing.SwingUtilities;
-import org.rosuda.REngine.Rserve.RserveException;
 import com.eco.bio7.actions.Bio7Action;
 import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
-import com.eco.bio7.rbridge.RServe;
+import com.eco.bio7.rbridge.RTools;
+import com.eco.bio7.rffm.RException;
 
 /*
  This example shows how you can create(rendered)graphs with the
- R application (Old example - you can now use the general plot function or the special Bio7Rserve API!).
+ R application (Old example - you can now use the general plot function or the R API of Bio7!).
 
- For this example the Rserve application has to be started!
+ For this example R has to be started!
 
  This example creates R plots. This plots then are opened
  in the ImageJ view (which then can be converted to a stack
@@ -41,7 +42,7 @@ public class RenderPlotToImageJ extends com.eco.bio7.compile.Model {
 
 	public void run() {
 
-		if (RServe.isAlive()) {
+		if (RTools.isAlive()) {
 			/* The root of the workspace */
 			//root = FileRoot.getFileRoot();
 			/* Get the path and convert it for R (Windows) */
@@ -53,29 +54,29 @@ public class RenderPlotToImageJ extends com.eco.bio7.compile.Model {
 			/* Transfer path to R ! */
 
 			try {
-				RServe.getConnection().assign("fileroot", f);
+				RBridge.getBackend().assign("fileroot", f);
 				/*
 				 * We create a *.png file in the project. Use the Refresh action
 				 * to see the image!
 				 */
-				RServe.getConnection().eval(
+				RBridge.getBackend().eval(
 						"try(png(fileroot,width=500,height=500))");
 
 				/*-----------Here you can place your custom plot!---------------------------*/
 
-				RServe.getConnection().eval("x<-runif(1:1000)");
-				RServe.getConnection().eval("hist(x);");
+				RBridge.getBackend().eval("x<-runif(1:1000)");
+				RBridge.getBackend().eval("hist(x);");
 
 				/*------------------------------------------------------------------------*/
 
 				/* We close the device! */
-				RServe.getConnection().eval("dev.off();");
+				RBridge.getBackend().eval("dev.off();");
 
 			}
 
-			catch (RserveException e) {
+			catch (RException e) {
 
-				System.out.println(e.getRequestErrorDescription());
+				System.out.println(e.getMessage());
 			}
 			/* Now we open the plot in ImageJ as a tab! */
 			SwingUtilities.invokeLater(new Runnable() {
@@ -89,8 +90,8 @@ public class RenderPlotToImageJ extends com.eco.bio7.compile.Model {
 		else {
 
 			Bio7Action.stopCalculation();
-			Bio7Dialog.message("Rserve application is not alive!");
-			System.out.println("Rserve is not alive!");
+			Bio7Dialog.message("R is not running!");
+			System.out.println("R is not running!");
 
 		}
 

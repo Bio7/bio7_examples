@@ -1,7 +1,7 @@
 /*
 This snippet will invoke a opened spreadsheet where you 
 have to select a range of values which will be transferred 
-to R if the Rserve application is alive!*/
+to R if R is running!*/
 
 LibreOffice.selectionToR();
 

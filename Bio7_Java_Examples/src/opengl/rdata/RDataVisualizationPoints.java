@@ -1,24 +1,25 @@
 package opengl.rdata;
 
+import com.eco.bio7.rbridge.backend.RBackend;
+import com.eco.bio7.rbridge.RBridge;
 import static com.eco.bio7.spatial.SpatialUtil.*;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
-import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RserveException;
 
-import com.eco.bio7.rbridge.RServe;
+import com.eco.bio7.rbridge.RTools;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import static com.jogamp.opengl.GL2.*;
+import com.eco.bio7.rffm.RException;
+import com.eco.bio7.rffm.RTypeException;
 
 /*
  This example creates random (normal distributed) numbers dynamically 
  in R and transfers them to the Space view!
- Rserve has to be alive!
+ R has to run!
  */
 public class RDataVisualizationPoints extends com.eco.bio7.compile.Model {
 
@@ -35,25 +36,25 @@ public class RDataVisualizationPoints extends com.eco.bio7.compile.Model {
 	}
 
 	public void createRData() {
-		if (RServe.isAlive()) {
+		if (RTools.isAlive()) {
 			try {
 				/* Create the data in R! */
-				RConnection connection = RServe.getConnection();
+				RBackend connection = RBridge.getBackend();
 				connection.eval("x<-rnorm(1000)*300");
 				connection.eval("y<-rnorm(1000)*300");
 				connection.eval("z<-rnorm(1000)*300");
 				/* Transfer the data from R! */
 				try {
-					x = (double[]) connection.eval("x").asDoubles();
-					y = (double[]) connection.eval("y").asDoubles();
-					z = (double[]) connection.eval("z").asDoubles();
-				} catch (REXPMismatchException e) {
+					x = (double[]) connection.eval("x").doubles();
+					y = (double[]) connection.eval("y").doubles();
+					z = (double[]) connection.eval("z").doubles();
+				} catch (RTypeException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} catch (RserveException e) {
+			} catch (RException e) {
 
-				System.out.println(e.getRequestErrorDescription());
+				System.out.println(e.getMessage());
 			}
 		}
 

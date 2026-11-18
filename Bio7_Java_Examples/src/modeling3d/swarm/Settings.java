@@ -26,8 +26,8 @@ public class Settings extends Composite {
 		addSlider("Alignment", 0, 100, (int) (model.alignmentWeight * 10), 10.0, val -> model.alignmentWeight = val);
 		addSlider("Cohesion", 0, 100, (int) (model.cohesionWeight * 10), 10.0, val -> model.cohesionWeight = val);
 
-		// Radius: Range 1 to 50 (Cast to float for the model)
-		addSlider("Radius", 1, 50, (int) model.radius, 1.0, val -> model.radius = val.floatValue());
+		// The size of the gliders: range 1 to 50 (cast to float for the model)
+		addSlider("Size", 1, 50, (int) model.radius, 1.0, val -> model.radius = val.floatValue());
 
 		// Cam Dist: Range 5 to 500
 		addSlider("Cam Dist", 5, 500, (int) model.camDist, 1.0, val -> model.camDist = val);

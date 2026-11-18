@@ -1,0 +1,125 @@
+---
+title: "Image Analysis with ImageJ and Python Chunks"
+output: html_document
+---
+
+# An image analysis report
+
+The Python chunks use the images of ImageJ in Bio7 with the module `bio7`:
+
+* `bio7.image()` – the current ImageJ image as numpy array (`bio7.image("title")` an image by title)
+* `bio7.show_image(array, "title")` – shows a numpy array as a new ImageJ image
+* `bio7.results_table()` – the ImageJ results table as pandas DataFrame
+
+Needs numpy, scipy, pandas and matplotlib (install them with *Python Packages*).
+
+## An image in ImageJ
+
+A test image with cells is created and shown in ImageJ. To analyse your own
+image, open it in ImageJ instead (e.g., *File > Open Samples > Blobs*) and run
+the chunks from the next one on.
+
+```{python}
+import numpy as np
+import bio7
+
+rng = np.random.default_rng(7)
+h, w = 256, 320
+yy, xx = np.mgrid[0:h, 0:w]
+img = np.zeros((h, w))
+for _ in range(25):
+    cy, cx = rng.uniform(15, h - 15), rng.uniform(15, w - 15)
+    r = rng.uniform(6, 14)
+    img += 180 * np.exp(-((yy - cy) ** 2 + (xx - cx) ** 2) / (2 * (r / 1.6) ** 2))
+img += rng.normal(20, 8, img.shape)
+bio7.show_image(np.clip(img, 0, 255).astype(np.uint8), "Cells")
+"Shown in ImageJ: Cells"
+```
+
+## The current image of ImageJ
+
+```{python}
+image = bio7.image().astype(float)
+if image.ndim == 3:
+    # RGB or a stack: the mean of the channels
+    image = image.mean(axis=-1) if image.shape[-1] == 3 else image[0]
+print("Image size:", image.shape, " range:", image.min(), "-", image.max())
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+plt.hist(image.ravel(), bins=64, color="slategray")
+plt.yscale("log")
+plt.xlabel("Intensity")
+plt.ylabel("Pixels")
+plt.title("Histogram")
+plt.show()
+```
+
+## Segmentation
+
+A threshold (Otsu, computed with numpy), labelled with scipy.
+
+```{python}
+from scipy import ndimage as ndi
+
+def otsu(values, bins=256):
+    hist, edges = np.histogram(values, bins=bins)
+    centers = (edges[:-1] + edges[1:]) / 2
+    w0 = np.cumsum(hist)
+    w1 = w0[-1] - w0
+    m0 = np.cumsum(hist * centers) / np.maximum(w0, 1)
+    m1 = (np.sum(hist * centers) - np.cumsum(hist * centers)) / np.maximum(w1, 1)
+    return centers[np.argmax(w0 * w1 * (m0 - m1) ** 2)]
+
+smooth = ndi.gaussian_filter(image, 1.5)
+t = otsu(smooth)
+mask = ndi.binary_opening(smooth > t, iterations=2)
+labels, n = ndi.label(mask)
+print(f"Threshold: {t:.1f}, objects: {n}")
+bio7.show_image(labels.astype(np.uint16), "Labels")
+```
+
+```{python}
+fig, ax = plt.subplots(1, 2, figsize=(9, 3.6))
+ax[0].imshow(image, cmap="gray")
+ax[0].set_title("Image")
+ax[1].imshow(labels, cmap="nipy_spectral", interpolation="nearest")
+ax[1].set_title(f"{n} objects")
+for a in ax:
+    a.axis("off")
+fig.tight_layout()
+```
+
+## Measurements
+
+```{python}
+import pandas as pd
+
+index = np.arange(1, n + 1)
+area = ndi.sum(np.ones_like(image), labels, index)
+mean = ndi.mean(image, labels, index)
+centers = np.array(ndi.center_of_mass(image, labels, index))
+objects = pd.DataFrame({"Area": area, "Mean": mean.round(1),
+                        "X": centers[:, 1].round(1), "Y": centers[:, 0].round(1)}, index=index)
+objects.describe().round(1)
+```
+
+```{python}
+plt.scatter(objects["Area"], objects["Mean"], s=20)
+plt.xlabel("Area (pixels)")
+plt.ylabel("Mean intensity")
+plt.title("Objects")
+plt.show()
+```
+
+The table can be transferred to R (if R runs) for further statistics:
+
+```{python}
+try:
+    bio7.to_r("objects", objects)
+    print("Data frame 'objects' created in R")
+except Exception as e:
+    print("Not transferred:", e)
+```

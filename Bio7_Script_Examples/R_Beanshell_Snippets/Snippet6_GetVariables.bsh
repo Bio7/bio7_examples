@@ -2,14 +2,16 @@
 This is an example how to make a Java GUI for R methods.
 In this example a summary of selected, available variables is displayed. */
 
-import org.rosuda.REngine.REXP;
+import com.eco.bio7.rbridge.backend.RBackend;
+import com.eco.bio7.rbridge.RBridge;
+import com.eco.bio7.rffm.RValue;
 
-//We proof if RServe is running!
-if(RServe.isAliveDialog()){
+//We proof if RTools is running!
+if(RTools.isAliveDialog()){
 //optional method: isAlive() -> without dialog!
 	
 
-RConnection connection = RServe.getConnection();	
+RBackend connection = RBridge.getBackend();	
 //Get all variables from the workspace!
 connection.eval("remove(variables)");
 connection.eval("remove(last.warning)");
@@ -20,8 +22,8 @@ connection.eval("empty<-0");
 // List all variables in workspace!
 connection.eval("variables<-ls()");
 
-REXP x = connection.eval("variables");
-String[] v=x.asStrings();
+RValue x = connection.eval("variables");
+String[] v=x.strings();
 JPanel panel = new JPanel();
 panel.setLayout( null );
 JLabel label=new JLabel();
@@ -37,7 +39,7 @@ public void itemStateChanged(ItemEvent event) {
 		&& event.getStateChange() == ItemEvent.SELECTED) {
 		// Evaluate and print it to the console!
 
-		RServe.print("summary(" + combo.getSelectedItem() + ")");
+		RTools.print("summary(" + combo.getSelectedItem() + ")");
 
 	}
 }

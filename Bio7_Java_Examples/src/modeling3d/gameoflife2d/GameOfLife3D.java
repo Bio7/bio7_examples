@@ -86,6 +86,7 @@ public class GameOfLife3D extends com.eco.bio7.compile.Model {
 	}
 
 	private void setupModel() {
+		Work.closePerspective("3d");
 		Work.openPerspective("com.eco.bio7.perspective_3d");
 		if (!SpatialUtil.isStarted())
 			SpatialUtil.startStop();
@@ -458,10 +459,9 @@ public class GameOfLife3D extends com.eco.bio7.compile.Model {
 		if (statsOverlay == null)
 			return;
 
-		if (SpatialUtil.isSplitView()) {
-			if (SpatialUtil.isSplitPanelDrawing())
-				return;
-		}
+		/* Not in the small view of the split view */
+		if (SpatialUtil.isSplitPanelDrawing())
+			return;
 
 		Graphics2D g2d = statsOverlay.createGraphics();
 
