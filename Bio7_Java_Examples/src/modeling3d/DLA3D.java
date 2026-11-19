@@ -31,6 +31,7 @@ public class DLA3D extends com.eco.bio7.compile.Model {
 	}
 
 	public void setup() {
+		Work.closePerspective("Custom");
 		Work.openPerspective("com.eco.bio7.perspective_3d");
 		setupModel();
 	}

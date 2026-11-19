@@ -86,7 +86,7 @@ public class GameOfLife3D extends com.eco.bio7.compile.Model {
 	}
 
 	private void setupModel() {
-		Work.closePerspective("3d");
+		Work.closePerspective("Custom");
 		Work.openPerspective("com.eco.bio7.perspective_3d");
 		if (!SpatialUtil.isStarted())
 			SpatialUtil.startStop();

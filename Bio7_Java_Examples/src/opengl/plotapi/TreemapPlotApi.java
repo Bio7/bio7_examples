@@ -1,4 +1,4 @@
-package opengl.plotapi.charts;
+package opengl.plotapi;
 
 import com.eco.bio7.spatial.Plot3D;
 import com.eco.bio7.spatial.PlotLegend;

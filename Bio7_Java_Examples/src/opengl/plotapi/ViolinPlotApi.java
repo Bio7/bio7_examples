@@ -1,4 +1,4 @@
-package opengl.plotapi.charts;
+package opengl.plotapi;
 
 import java.util.Random;
 

@@ -81,6 +81,7 @@ public class ForestFire_Full3D extends com.eco.bio7.compile.Model {
 	}
 
 	private void setupModel() {
+		Work.closePerspective("Custom");
 		Work.openPerspective("com.eco.bio7.perspective_3d");
 		/*Start the run method!*/
 		if (!SpatialUtil.isStarted())

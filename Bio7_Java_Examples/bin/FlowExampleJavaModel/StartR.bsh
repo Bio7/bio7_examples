@@ -1,4 +1,0 @@
-/*With this action you can start R!*/
-if(RTools.isConnected()==false){
-Bio7Action.startR();
-}
