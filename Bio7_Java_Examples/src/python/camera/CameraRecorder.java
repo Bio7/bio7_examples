@@ -169,7 +169,7 @@ public class CameraRecorder extends com.eco.bio7.compile.Model {
 
 	private String record(Settings s) throws Exception {
 		String source = s.source().trim().matches("\\d+") ? s.source().trim() : PythonExamples.quote(s.source().trim());
-		PythonUtil.exec(PythonExamples.addToPath(PythonExamples.folder("OpenCV")) + "import sys\nsys.modules.pop('camera_capture', None)\nimport camera_capture as _cam\n"
+		PythonUtil.exec(PythonExamples.importModule(PythonExamples.folder("OpenCV"), "camera_capture", "_cam")
 				+ String.format(Locale.ROOT, "_cam_info = _cam.open_camera(%s, %d, %d)", source, s.width(), s.height()));
 		String grab = "_cam.grab(" + (s.gray() ? "True" : "False") + ")";
 		ResultsTable rt = new ResultsTable();
