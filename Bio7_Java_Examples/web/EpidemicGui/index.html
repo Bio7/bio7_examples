@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- The page of the app, created by Bio7 (WindowBuilder JavaScript) from the GUI
+     class EpidemicGui.java. Change the GUI with the WindowBuilder and create the app
+     again: this file is written again (the code of app.js and style.css stays). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Epidemic (SIR Model)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Epidemic (SIR Model)</h1>
+<div class="wb-grid" style="grid-template-columns: auto 1fr">
+<div class="wb-cell"><label>Infection rate (1/100 per day)</label></div>
+<div class="wb-cell"><span class="wb-slider"><input type="range" id="scaleBeta" min="5" max="100" step="1" value="30"><output id="scaleBeta_value" for="scaleBeta">30</output></span></div>
+<div class="wb-cell"><label>Recovery rate (1/100 per day)</label></div>
+<div class="wb-cell"><span class="wb-slider"><input type="range" id="scaleGamma" min="1" max="50" step="1" value="10"><output id="scaleGamma_value" for="scaleGamma">10</output></span></div>
+<div class="wb-cell"><label>Vaccinated (%)</label></div>
+<div class="wb-cell"><span class="wb-slider"><input type="range" id="scaleVaccinated" min="0" max="95" step="1" value="0"><output id="scaleVaccinated_value" for="scaleVaccinated">0</output></span></div>
+<div class="wb-cell"><label>Days</label></div>
+<div class="wb-cell"><input type="number" id="spinnerDays" min="10" max="1000" step="1" value="160"></div>
+<div class="wb-cell"><label><input type="checkbox" id="chkRecovered" checked> Show the recovered</label></div>
+<div class="wb-cell"><div id="cmpButtons">
+<div class="wb-row">
+<button type="button" id="btnRun">Run</button>
+<button type="button" id="btnAnimate">Animate</button>
+</div>
+</div></div>
+<div class="wb-cell" style="grid-column: span 2"><canvas id="canvasChart" width="700" height="350"></canvas></div>
+<div class="wb-cell" style="grid-column: span 2"><span id="outSummary" class="wb-output">(the summary)</span></div>
+<div class="wb-cell" style="grid-column: span 2"><table id="tableResults" class="wb-table"></table></div>
+</div>
+<script>
+/* The values of the sliders, the tabs (part of the generated page) */
+document.querySelectorAll("input[type=range]").forEach(r => {
+  const o = document.getElementById(r.id + "_value");
+  if (o) r.addEventListener("input", () => o.textContent = r.value);
+});
+document.querySelectorAll(".wb-tabs").forEach(t => {
+  const bar = t.querySelectorAll(":scope > .wb-tabbar > button");
+  const panels = t.querySelectorAll(":scope > .wb-tab");
+  bar.forEach((b, i) => b.addEventListener("click", () => {
+    bar.forEach((x, k) => x.classList.toggle("active", k === i));
+    panels.forEach((p, k) => p.hidden = k !== i);
+  }));
+});
+</script>
+<script src="app.js"></script>
+</body>
+</html>

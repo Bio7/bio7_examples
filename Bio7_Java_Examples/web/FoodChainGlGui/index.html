@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!-- The page of the app, created by Bio7 (WindowBuilder JavaScript) from the GUI
+     class FoodChainGlGui.java (/Bio7_Java_Examples/src/wbgl). Change the GUI with the WindowBuilder and create the app
+     again: this file is written again (the code of app.js and style.css stays). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Food Chain in 3D (WebGL)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Food Chain in 3D (WebGL)</h1>
+<div class="wb-grid" style="grid-template-columns: 1fr 1fr">
+<div class="wb-cell"><label>Half saturation b1 (1/10)</label></div>
+<div class="wb-cell"><span class="wb-slider"><input type="range" id="scaleB1" min="20" max="62" step="1" value="30"><output id="scaleB1_value" for="scaleB1">30</output></span></div>
+<div class="wb-cell"><label>Time</label></div>
+<div class="wb-cell"><input type="number" id="spinnerTime" min="500" max="20000" step="500" value="5000"></div>
+<div class="wb-cell"><label>Transient left out (%)</label></div>
+<div class="wb-cell"><span class="wb-slider"><input type="range" id="scaleTransient" min="0" max="80" step="1" value="20"><output id="scaleTransient_value" for="scaleTransient">20</output></span></div>
+<div class="wb-cell"><label>Color of the curve</label></div>
+<div class="wb-cell"><select id="comboColor"><option selected>Time</option><option>Top predator</option></select></div>
+<div class="wb-cell" style="grid-column: span 2"><button type="button" id="btnRun">Run</button></div>
+<div class="wb-cell"><canvas id="glAttractor" class="wb-webgl" width="500" height="450"></canvas></div>
+<div class="wb-cell"><canvas id="canvasSeries" width="500" height="450"></canvas></div>
+<div class="wb-cell" style="grid-column: span 2"><span id="outSummary" class="wb-output">(the summary)</span></div>
+</div>
+<script>
+/* The values of the sliders, the tabs (part of the generated page) */
+document.querySelectorAll("input[type=range]").forEach(r => {
+  const o = document.getElementById(r.id + "_value");
+  if (o) r.addEventListener("input", () => o.textContent = r.value);
+});
+document.querySelectorAll(".wb-tabs").forEach(t => {
+  const bar = t.querySelectorAll(":scope > .wb-tabbar > button");
+  const panels = t.querySelectorAll(":scope > .wb-tab");
+  bar.forEach((b, i) => b.addEventListener("click", () => {
+    bar.forEach((x, k) => x.classList.toggle("active", k === i));
+    panels.forEach((p, k) => p.hidden = k !== i);
+  }));
+});
+</script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -15,6 +15,8 @@ public class Settings extends Composite {
 		this.setLayout(new GridLayout(3, false));
 
 		// --- Parameter Rows ---
+		// The number of boids: 10 to 1000 (added or removed at the next frame)
+		addSlider("Boids", 10, 1000, model.boidCount, 1.0, val -> model.boidCount = val.intValue());
 		// Max Speed: Range 0.1 to 20.0
 		addSlider("Max Speed", 1, 200, (int) (model.maxSpeed * 10), 10.0, val -> model.maxSpeed = val);
 
@@ -32,7 +34,60 @@ public class Settings extends Composite {
 		// Cam Dist: Range 5 to 500
 		addSlider("Cam Dist", 5, 500, (int) model.camDist, 1.0, val -> model.camDist = val);
 
-		addSlider("Floor Size", 1, 300, model.FLOOR_LEN, 1, val -> model.FLOOR_LEN = val.intValue());
+		// The size of the floor (in 100 units): also the flight space, the box and the axes of the view
+		addSlider("Floor Size", 2, 300, model.FLOOR_LEN, 1, val -> model.setFloorSize(val.intValue()));
+
+		// Obstacles: on/off, the number, the placement (random or fixed in the centre)
+		final Button chkObstacles = new Button(this, SWT.CHECK);
+		chkObstacles.setText("Obstacles (pillars)");
+		chkObstacles.setSelection(model.obstaclesEnabled);
+		chkObstacles.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
+		chkObstacles.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				model.obstaclesEnabled = chkObstacles.getSelection();
+				model.requestObstacles();
+			}
+		});
+		addSlider("Obstacles", 1, 50, model.obstacleCount, 1.0, val -> {
+			model.obstacleCount = val.intValue();
+			model.requestObstacles();
+		});
+		new Label(this, SWT.NONE).setText("Placement");
+		final Combo comboPlacement = new Combo(this, SWT.READ_ONLY);
+		comboPlacement.setItems(BoidSphereModel.PLACEMENTS);
+		comboPlacement.setText(model.obstaclePlacement);
+		comboPlacement.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboPlacement.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				model.obstaclePlacement = comboPlacement.getText();
+				model.requestObstacles();
+			}
+		});
+		final Button btnNewPositions = new Button(this, SWT.PUSH);
+		btnNewPositions.setText("New positions");
+		btnNewPositions.setToolTipText("New random positions of the obstacles (placement Random)");
+		btnNewPositions.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				model.requestObstacles();
+			}
+		});
+
+		// The angle of the global view (a mouse rotation is reset)
+		new Label(this, SWT.NONE).setText("Global view");
+		final Combo comboView = new Combo(this, SWT.READ_ONLY);
+		comboView.setItems(BoidSphereModel.GLOBAL_VIEWS);
+		comboView.setText(model.globalView);
+		comboView.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		comboView.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				model.globalView = comboView.getText();
+				model.applyGlobalView();
+			}
+		});
 	}
 
 	/**

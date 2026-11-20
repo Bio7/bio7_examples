@@ -40,9 +40,26 @@ public class PythonExamples {
 		return chosen;
 	}
 
-	/** Python code which makes the modules of a folder importable. */
+	/**
+	 * Python code which makes the modules of a folder importable: the folder is
+	 * the first of sys.path and the caches of the imports are cleared (the
+	 * embedded Python keeps running, it may have looked into the folder before a
+	 * module was copied into it).
+	 */
 	public static String addToPath(Path folder) {
-		return "import sys\n_p = " + quote(folder.toString()) + "\nif _p not in sys.path:\n    sys.path.insert(0, _p)\n";
+		return "import sys, importlib\n_p = " + quote(folder.toString()) + "\nwhile _p in sys.path:\n    sys.path.remove(_p)\n"
+				+ "sys.path.insert(0, _p)\nsys.path_importer_cache.pop(_p, None)\nimportlib.invalidate_caches()\n";
+	}
+
+	/**
+	 * Python code which imports a module of a folder of the examples (as alias),
+	 * a new import each time (changes of the module are used); a clear error if
+	 * the module is not in the folder.
+	 */
+	public static String importModule(Path folder, String module, String alias) {
+		return addToPath(folder) + "import os\nif not os.path.isfile(os.path.join(_p, " + quote(module + ".py") + ")):\n"
+				+ "    raise FileNotFoundError(" + quote(module + ".py is not in the folder ") + " + _p)\n"
+				+ "sys.modules.pop(" + quote(module) + ", None)\nimport " + module + " as " + alias + "\n";
 	}
 
 	/** A Python string literal. */

@@ -1,0 +1,27 @@
+/* The style of the app (WindowBuilder JavaScript): written once, change it as you like */
+body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 16px; color: #222; background: #fafafa; }
+h1 { font-size: 1.4em; margin: 0 0 12px; }
+.wb-grid { display: grid; gap: 8px 12px; align-items: center; }
+.wb-fill { display: flex; gap: 12px; }
+.wb-fill > .wb-cell { flex: 1; }
+.wb-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.wb-cell input[type=text], .wb-cell input[type=number], .wb-cell select, .wb-cell textarea { width: 100%; box-sizing: border-box; }
+.wb-slider { display: flex; gap: 8px; align-items: center; }
+.wb-slider input { flex: 1; }
+.wb-slider output { min-width: 3em; text-align: right; font-variant-numeric: tabular-nums; }
+fieldset { border: 1px solid #ccc; border-radius: 6px; padding: 8px 12px; margin: 0; }
+/* A canvas keeps its size (the size hints of the design), smaller only on narrow screens */
+canvas { max-width: 100%; height: auto; border: 1px solid #ccc; background: #fff; }
+canvas.wb-webgl { background: #1a1a24; }
+.wb-output { font-variant-numeric: tabular-nums; }
+.wb-table { border-collapse: collapse; }
+.wb-table th, .wb-table td { border: 1px solid #ccc; padding: 2px 8px; text-align: right; }
+.wb-tabbar button { border: 1px solid #ccc; background: #eee; padding: 4px 12px; }
+.wb-tabbar button.active { background: #fff; border-bottom-color: #fff; }
+.wb-tab { border: 1px solid #ccc; padding: 8px; }
+button { padding: 4px 12px; }
+@media (prefers-color-scheme: dark) {
+  body { color: #ddd; background: #1e1e1e; }
+  canvas { background: #2a2a2a; border-color: #555; }
+  fieldset, .wb-table th, .wb-table td, .wb-tab { border-color: #555; }
+}

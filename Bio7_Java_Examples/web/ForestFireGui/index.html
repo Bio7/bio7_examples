@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- The page of the app, created by Bio7 (WindowBuilder JavaScript) from the GUI
+     class ForestFireGui.java. Change the GUI with the WindowBuilder and create the app
+     again: this file is written again (the code of app.js and style.css stays). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forest Fire</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Forest Fire</h1>
+<div class="wb-grid" style="grid-template-columns: auto 1fr">
+<div class="wb-cell"><label>Tree growth p (per 1000)</label></div>
+<div class="wb-cell"><span class="wb-slider"><input type="range" id="scaleGrowth" min="1" max="100" step="1" value="30"><output id="scaleGrowth_value" for="scaleGrowth">30</output></span></div>
+<div class="wb-cell"><label>Lightning f (per 100000)</label></div>
+<div class="wb-cell"><span class="wb-slider"><input type="range" id="scaleLightning" min="1" max="100" step="1" value="5"><output id="scaleLightning_value" for="scaleLightning">5</output></span></div>
+<div class="wb-cell"><label>Grid size</label></div>
+<div class="wb-cell"><select id="comboSize"><option>100</option><option>150</option><option selected>200</option><option>300</option></select></div>
+<div class="wb-cell"><label>Steps per frame</label></div>
+<div class="wb-cell"><input type="number" id="spinnerSpeed" min="1" max="20" step="1" value="1"></div>
+<div class="wb-cell" style="grid-column: span 2"><div id="cmpButtons">
+<div class="wb-row">
+<button type="button" id="btnStart">Start</button>
+<button type="button" id="btnStop">Stop</button>
+<button type="button" id="btnReset">Reset</button>
+</div>
+</div></div>
+<div class="wb-cell" style="grid-column: span 2"><canvas id="canvasForest" width="600" height="600"></canvas></div>
+<div class="wb-cell" style="grid-column: span 2"><canvas id="canvasSeries" width="600" height="150"></canvas></div>
+<div class="wb-cell" style="grid-column: span 2"><span id="outStatus" class="wb-output">(the status)</span></div>
+</div>
+<script>
+/* The values of the sliders, the tabs (part of the generated page) */
+document.querySelectorAll("input[type=range]").forEach(r => {
+  const o = document.getElementById(r.id + "_value");
+  if (o) r.addEventListener("input", () => o.textContent = r.value);
+});
+document.querySelectorAll(".wb-tabs").forEach(t => {
+  const bar = t.querySelectorAll(":scope > .wb-tabbar > button");
+  const panels = t.querySelectorAll(":scope > .wb-tab");
+  bar.forEach((b, i) => b.addEventListener("click", () => {
+    bar.forEach((x, k) => x.classList.toggle("active", k === i));
+    panels.forEach((p, k) => p.hidden = k !== i);
+  }));
+});
+</script>
+<script src="app.js"></script>
+</body>
+</html>

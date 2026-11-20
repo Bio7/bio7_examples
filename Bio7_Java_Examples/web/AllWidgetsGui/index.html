@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- The page of the app, created by Bio7 (WindowBuilder JavaScript) from the GUI
+     class AllWidgetsGui.java (/Bio7_Java_Examples/src/wbwidgets). Change the GUI with the WindowBuilder and create the app
+     again: this file is written again (the code of app.js and style.css stays). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All Widgets (WindowBuilder JavaScript)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>All Widgets (WindowBuilder JavaScript)</h1>
+<div class="wb-grid" style="grid-template-columns: auto 1fr">
+<div class="wb-cell" style="grid-column: span 2"><label>All widgets which WindowBuilder Shiny and WindowBuilder JavaScript convert. Each label: the SWT widget -&gt; Shiny / HTML. The values of all inputs are shown in the tab Outputs.</label></div>
+<div class="wb-cell"><button type="button" id="btnPress">Button (push) -&gt; actionButton / &lt;button&gt;</button></div>
+<div class="wb-cell"><span id="outPressed" class="wb-output">Label outPressed -&gt; textOutput / &lt;span&gt;</span></div>
+<div class="wb-cell" style="grid-column: span 2"><div class="wb-tabs" id="tabFolder">
+<div class="wb-tabbar"><button type="button" class="active">Inputs</button><button type="button">Choices</button><button type="button">Outputs</button><button type="button">Layouts</button></div>
+<div class="wb-tab">
+<div id="cmpInputs">
+<div class="wb-grid" style="grid-template-columns: auto 1fr">
+<div class="wb-cell"><label>Scale -&gt; sliderInput / &lt;input type=range&gt;</label></div>
+<div class="wb-cell"><span class="wb-slider"><input type="range" id="scaleValue" min="0" max="100" step="1" value="50"><output id="scaleValue_value" for="scaleValue">50</output></span></div>
+<div class="wb-cell"><label>Slider -&gt; sliderInput / &lt;input type=range&gt;</label></div>
+<div class="wb-cell"><span class="wb-slider"><input type="range" id="sliderValue" min="0" max="200" step="5" value="30"><output id="sliderValue_value" for="sliderValue">30</output></span></div>
+<div class="wb-cell"><label>Spinner -&gt; numericInput / &lt;input type=number&gt;</label></div>
+<div class="wb-cell"><input type="number" id="spinnerCount" min="0" max="100" step="1" value="10"></div>
+<div class="wb-cell"><label>Spinner with digits (2) -&gt; decimals</label></div>
+<div class="wb-cell"><input type="number" id="spinnerRate" min="0" max="10" step="0.01" value="1.25"></div>
+<div class="wb-cell"><label>Text -&gt; textInput / &lt;input type=text&gt;</label></div>
+<div class="wb-cell"><input type="text" id="txtName" value="Bio7"></div>
+<div class="wb-cell"><label>Text (SWT.MULTI) -&gt; textAreaInput / &lt;textarea&gt;</label></div>
+<div class="wb-cell"><textarea id="txtNotes" rows="4" placeholder="Several lines"></textarea></div>
+<div class="wb-cell"><label>Text (SWT.PASSWORD) -&gt; passwordInput / &lt;input type=password&gt;</label></div>
+<div class="wb-cell"><input type="password" id="txtSecret" value=""></div>
+<div class="wb-cell"><label>DateTime (SWT.DATE) -&gt; dateInput / &lt;input type=date&gt;</label></div>
+<div class="wb-cell"><input type="date" id="dateDay"></div>
+<div class="wb-cell"><label>DateTime (SWT.TIME) -&gt; textInput / &lt;input type=time&gt;</label></div>
+<div class="wb-cell"><input type="time" id="timeOfDay"></div>
+</div>
+</div>
+</div>
+<div class="wb-tab" hidden>
+<div id="cmpChoices">
+<div class="wb-grid" style="grid-template-columns: auto 1fr">
+<div class="wb-cell"><label>Combo -&gt; selectInput / &lt;select&gt;</label></div>
+<div class="wb-cell"><select id="comboColor"><option selected>Blue</option><option>Red</option><option>Green</option></select></div>
+<div class="wb-cell"><label>List -&gt; selectInput (a list) / &lt;select size&gt;</label></div>
+<div class="wb-cell"><select id="listSpecies" size="4"><option>Fox</option><option>Rabbit</option><option>Deer</option><option>Owl</option></select></div>
+<div class="wb-cell"><label>List (SWT.MULTI) -&gt; selectInput(multiple) / &lt;select multiple&gt;</label></div>
+<div class="wb-cell"><select id="listHabitats" size="4" multiple><option>Forest</option><option>Meadow</option><option>Lake</option><option>City</option></select></div>
+<div class="wb-cell"><label>Button (SWT.CHECK) -&gt; checkboxInput / &lt;input type=checkbox&gt;</label></div>
+<div class="wb-cell"><label><input type="checkbox" id="chkActive" checked> Active</label></div>
+<div class="wb-cell"><label>Button (SWT.TOGGLE) -&gt; checkboxInput / &lt;input type=checkbox&gt;</label></div>
+<div class="wb-cell"><label><input type="checkbox" id="tglMode"> Expert mode</label></div>
+<div class="wb-cell"><label>Button (SWT.RADIO) in a Group -&gt; radioButtons / &lt;input type=radio&gt;</label></div>
+<div class="wb-cell"><fieldset id="grpSize"><legend>Group -&gt; wellPanel / &lt;fieldset&gt;</legend>
+<div class="wb-row">
+<span class="wb-radios"><label><input type="radio" name="grpSize" id="rbSmall" value="Small"> Small</label><label><input type="radio" name="grpSize" id="rbMedium" value="Medium" checked> Medium</label><label><input type="radio" name="grpSize" id="rbLarge" value="Large"> Large</label></span>
+</div>
+</fieldset></div>
+</div>
+</div>
+</div>
+<div class="wb-tab" hidden>
+<div id="cmpOutputs">
+<div class="wb-grid" style="grid-template-columns: auto 1fr">
+<div class="wb-cell"><label>Canvas -&gt; plotOutput / &lt;canvas&gt;</label></div>
+<div class="wb-cell"><canvas id="canvasPlot" width="500" height="250"></canvas></div>
+<div class="wb-cell"><label>Table -&gt; tableOutput / &lt;table&gt;</label></div>
+<div class="wb-cell"><table id="tableValues" class="wb-table"></table></div>
+<div class="wb-cell"><label>Label outText -&gt; textOutput / &lt;span&gt;</label></div>
+<div class="wb-cell"><span id="outText" class="wb-output">(a text of the server)</span></div>
+<div class="wb-cell"><label>Text outValues -&gt; verbatimTextOutput / &lt;pre&gt;</label></div>
+<div class="wb-cell"><pre id="outValues" class="wb-output"></pre></div>
+<div class="wb-cell"><label>Browser -&gt; uiOutput / &lt;div&gt; (HTML)</label></div>
+<div class="wb-cell"><div id="browserInfo" class="wb-output"></div></div>
+</div>
+</div>
+</div>
+<div class="wb-tab" hidden>
+<div id="cmpLayouts">
+<div class="wb-grid" style="grid-template-columns: 1fr">
+<div class="wb-cell"><label>GridLayout -&gt; fluidRow and column / a CSS grid (all tabs use it; a span: the width of several columns)</label></div>
+<div class="wb-cell"><label>FillLayout (SWT.HORIZONTAL) -&gt; columns of equal width / a flex row:</label></div>
+<div class="wb-cell"><div id="cmpFill">
+<div class="wb-fill" style="flex-direction: row">
+<div class="wb-cell"><label>A</label></div>
+<div class="wb-cell"><label>B</label></div>
+<div class="wb-cell"><label>C</label></div>
+</div>
+</div></div>
+<div class="wb-cell"><label>RowLayout -&gt; flowLayout / a flex row which wraps:</label></div>
+<div class="wb-cell"><div id="cmpRow">
+<div class="wb-row">
+<label><input type="checkbox" id="chkOne"> One</label>
+<label><input type="checkbox" id="chkTwo"> Two</label>
+</div>
+</div></div>
+<div class="wb-cell"><label>SashForm (SWT.HORIZONTAL) -&gt; columns / a flex row:</label></div>
+<div class="wb-cell"><div id="sashForm">
+<div class="wb-fill" style="flex-direction: row">
+<div class="wb-cell"><label>Left part</label></div>
+<div class="wb-cell"><label>Right part</label></div>
+</div>
+</div></div>
+<div class="wb-cell"><label>CTabFolder (and TabFolder) -&gt; tabsetPanel / tabs:</label></div>
+<div class="wb-cell"><div class="wb-tabs" id="ctabFolder">
+<div class="wb-tabbar"><button type="button" class="active">First</button><button type="button">Second</button></div>
+<div class="wb-tab">
+<label>The content of the first tab</label>
+</div>
+<div class="wb-tab" hidden>
+<label>The content of the second tab</label>
+</div>
+</div></div>
+<div class="wb-cell"><span>Link -> HTML: <a href="https://bio7.org">bio7.org</a></span></div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+<script>
+/* The values of the sliders, the tabs (part of the generated page) */
+document.querySelectorAll("input[type=range]").forEach(r => {
+  const o = document.getElementById(r.id + "_value");
+  if (o) r.addEventListener("input", () => o.textContent = r.value);
+});
+document.querySelectorAll(".wb-tabs").forEach(t => {
+  const bar = t.querySelectorAll(":scope > .wb-tabbar > button");
+  const panels = t.querySelectorAll(":scope > .wb-tab");
+  bar.forEach((b, i) => b.addEventListener("click", () => {
+    bar.forEach((x, k) => x.classList.toggle("active", k === i));
+    panels.forEach((p, k) => p.hidden = k !== i);
+  }));
+});
+</script>
+<script src="app.js"></script>
+</body>
+</html>

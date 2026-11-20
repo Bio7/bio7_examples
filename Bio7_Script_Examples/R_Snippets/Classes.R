@@ -20,8 +20,8 @@ t1 <- track(x = 1:10, y = 1:10 + rnorm(10))
 trackCurve <- setClass("trackCurve",
 		slots = c(smooth = "numeric"),
 		contains = "track")
-
-
+setClass("Person", representation(name = "character", age = "numeric"))
+setClass("Employee", representation(boss = "Person"), contains = "Person")
 alice <- new("Person", name = "Alice", age = 40)
 john <- new("Employee", name = "John", age = 20, boss = alice)
 
@@ -96,6 +96,51 @@ Person <- R6Class("Person",
   )
 )
 
+ann <- Person$new("Ann", "black")
+ann$set_hair("red")
 
+#S7 class
 
+## S7 (package S7, https://rconsortium.github.io/S7/) is the newer class
+## system of the R Consortium: classes with typed properties and a validator,
+## generics and methods. Shown in the outline view: the class with its
+## properties and the methods ("speak(Dog)") in the class.
+## Install it with install.packages("S7").
+library(S7)
 
+## A class with two typed properties; the validator checks the values
+## (it returns a message for an invalid object, else NULL)
+Dog <- new_class("Dog",
+  properties = list(
+    name = class_character,
+    age = class_numeric
+  ),
+  validator = function(self) {
+    if (length(self@age) == 1 && self@age < 0) "@age must be >= 0"
+  }
+)
+
+## A subclass with one more property
+ServiceDog <- new_class("ServiceDog", parent = Dog,
+  properties = list(
+    task = class_character
+  )
+)
+
+## A generic and its methods (the method of the subclass calls the one of
+## the parent class with super())
+speak <- new_generic("speak", "x")
+method(speak, Dog) <- function(x) {
+  paste(x@name, "says woof")
+}
+method(speak, ServiceDog) <- function(x) {
+  paste(speak(super(x, to = Dog)), "and helps with", x@task)
+}
+
+rex <- Dog(name = "Rex", age = 3)
+speak(rex)
+buddy <- ServiceDog(name = "Buddy", age = 5, task = "guiding")
+speak(buddy)
+## The properties are accessed with @ (the validator checks a new value)
+rex@age <- 4
+try(rex@age <- -1) # Error: @age must be >= 0
