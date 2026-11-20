@@ -4,8 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.opengl.GLCanvas;
-import org.eclipse.swt.opengl.GLData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -33,7 +31,7 @@ public class BoidsGlGui extends Composite {
 	private Button btnStart;
 	private Button btnStop;
 	private Button btnReset;
-	private GLCanvas glView;
+	private org.eclipse.swt.widgets.Canvas glView;
 	private Label outStatus;
 
 	public BoidsGlGui(Composite parent, int style) {
@@ -96,7 +94,7 @@ public class BoidsGlGui extends Composite {
 		btnReset = new Button(cmpButtons, SWT.NONE);
 		btnReset.setText("Reset");
 
-		glView = new GLCanvas(this, SWT.NONE, new GLData());
+		glView = new org.eclipse.swt.widgets.Canvas(this, SWT.NONE);
 		GridData gdView = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		gdView.widthHint = 700;
 		gdView.heightHint = 500;
