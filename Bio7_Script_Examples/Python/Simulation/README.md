@@ -16,6 +16,7 @@ Run a script with the Python editor of Bio7 (the embedded Python with numpy).
 | [hot_air_balloons.py](hot_air_balloons.py) | `GeoAgentModel`: OpenGL spheres on the globe | WorldWind globe |
 | [sheep_wolves.py](sheep_wolves.py) | `ValueGridModel`: sheep and wolves as images, shapes, four kinds of charts | ImageJ and the Charts view |
 | [pasture_3d.py](pasture_3d.py) | `AgentModel`: animated glTF models of sheep and wolves | 3D view |
+| [gliders.py](gliders.py) | `AgentModel`: a flock of gliders (triangles which climb, dive and bank), pillars as obstacles, a floor with shadows, a camera which follows a boid, the polarization of the flock | 3D view (split view) and the Charts view |
 
 ## Settings and buttons
 
@@ -51,7 +52,7 @@ class MyModel(GridModel):
 | Group | Methods |
 |---|---|
 | Images and 3D models | `self.load_image(name, file)`, `self.load_model(name, file)` (glTF `.glb`/`.gltf`, also animated); `Agent(..., image=, model=, animation=, heading=, size=)`, `GeoAgent(..., image=, model=, animation=)` |
-| Shapes (drawn again in each step) | `self.draw_line`, `draw_line3`, `draw_path(xs, ys)`, `draw_polygon(xs, ys, fill=, stroke=)`, `draw_circle`, `draw_rect`, `draw_text`, `draw_image(name, x, y, size, angle)` in the coordinates of the model |
+| Shapes (drawn again in each step) | `self.draw_line`, `draw_line3`, `draw_path(xs, ys)`, `draw_polygon(xs, ys, fill=, stroke=)`, `draw_circle`, `draw_rect`, `draw_text`, `draw_image(name, x, y, size, angle)` in the coordinates of the model; `draw_pillar(x, y, radius, height=None, color=)` (an agent model: a vertical cylinder from the floor, e.g. an obstacle) |
 | Charts | `self.chart(name, value)` (the first chart), `self.chart(name, value, chart="Title")` (another chart), `self.chart_xy(chart, name, x, y)`, `self.chart_bars(chart, labels, values)` |
 | Mathematics | `noise(x, y)`, `fractal_noise(x, y, octaves)` (also for arrays; the same values as in Java), `heading_of`, `cos_deg`, `sin_deg`, `linear_regression`, `normal_pdf`, `normal_cdf`, `self.random_binomial`, `self.random_weighted`; numpy and the modules of Pyodide (e.g., scipy: loaded by the page when the script imports them) |
 
@@ -61,7 +62,7 @@ class MyModel(GridModel):
 |---|---|
 | `GridModel` | `size(w, h)`, `width`, `height`, `cells` (a numpy array `cells[y, x]`), `wrap`, `palette(colors...)`, `get(x, y)`, `set(x, y, state)`, `count_neighbors(state)` (an array of the 8 neighbors; with `x, y` the number of one cell), `count4(state)`, `count(state)` |
 | `ValueGridModel` | `size(w, h)`, `values` (a numpy array), `wrap`, `range(min, max)`, `color_map(colors...)`, `VIRIDIS`, `get`, `set`, `sum4()`, `sum8()`, `laplacian()` (arrays), `mean()` |
-| `AgentModel`, `Agent` | `agents` (a list of `Agent(x, y, z, color)` and own subclasses), `box(w, h, d)`, `box_width`, `box_height`, `box_depth`, `agent_radius`, `agent_color`, `positions()` (an array (n, 3)), `distance(a, b)`, `neighbors(agent, r)`, `nearest(agent, r)`, `keep_in_box(agent)`, `wrap_in_box(agent)` |
+| `AgentModel`, `Agent` | `agents` (a list of `Agent(x, y, z, color)` and own subclasses), `box(w, h, d)`, `box_width`, `box_height`, `box_depth`, `agent_radius`, `agent_color`, `agent_shape` (`"sphere"` or `"glider"`: triangles which point in the direction of the movement, climb, dive and bank into turns), `floor` (`"none"`, `"grid"`, `"plane"`), `shadows`, `camera_follow(agent or index)` (the custom camera follows the agent, only in Bio7; `None`: off), `place_model(model, x, y, z=0, heading=0, size=0, animation=None)` (a 3D model of `load_model` in the environment, e.g. a house or a tree: no agent, it stays until `remove_model(index)` or `clear_models()`; Setup removes all), `positions()` (an array (n, 3)), `distance(a, b)`, `neighbors(agent, r)`, `nearest(agent, r)`, `keep_in_box(agent)`, `wrap_in_box(agent)` |
 | `GeoGridModel` | In `load()` (only in Bio7): `grid(file, columns)`, `raster(file, band=1, resampling="bilinear")`, `vector(file, value=1, attribute=None)`, `add_layer(name, values)`, `attribution(text)`, `show_on_globe()`. In `init()` and `step()`: `layer(name)`, `show_values(values, min, max, colors...)`, `show_states()`, `col_at(lon, lat)`, `row_at(lon, lat)`, `lon(x)`, `lat(y)`, `value(layer, x, y)`, `gradient(layer)`, `slope_degrees(layer)` (arrays), `cell_size_meters`, `south`, `west`, `north`, `east`, `crs` and all methods of a `GridModel` |
 | `GeoAgentModel`, `GeoAgent` | `agents` (a list of `GeoAgent(lon, lat)`: `color`, `size`, `label`, `altitude`, `heading`), `area(south, west, north, east)`, `agent_size`, `agent_color`, `agent_shape` (`"point"`, `"sphere"`, `"cone"`, `"box"`, `"cylinder"`), `agent_size_meters`, `view_pitch`, `distance_km(a, b)` (or of `lon1, lat1, lon2, lat2`), `move(agent, east_km, north_km)`, `move_towards(agent, lon, lat, km)`, `neighbors_km(agent, km)`, `cos_lat`, `cos_deg`, `sin_deg`, `EARTH_RADIUS` |
 

@@ -15,6 +15,8 @@ Start R in Bio7 (embedded R) and run the scripts in the R editor or with
 | 03_R_and_Python.R | `bio7_to_python()`, `bio7_python()`: data frames, matrices, dicts |
 | 04_Java_API.R | `J()`, `$new()`, methods and fields with `$`, collections, overlays |
 | 05_Browser_and_HTML.R | `bio7_browse()`: an HTML report in the browser view |
+| 06_3D_Plots.R | 3D plots (OpenGL) in the 3D view: scatter, surface with contours, 2D histogram bars, line, colored points with a wireframe, pie, HTML export (WebGL) |
+| 07_3D_Dynamic_Plots.R | Dynamic 3D plots: an evolving histogram and growing line graphs updated in each step (`plot = p`), random walkers recorded as HTML animation (`bio7_plot3d_recorder()`), box plot, violin, area, radar, rose and treemap charts |
 
 ## The functions
 
@@ -34,6 +36,28 @@ Start R in Bio7 (embedded R) and run the scripts in the R editor or with
 | `bio7_java_new(class, ...)` | a new Java object |
 | `bio7_java_ui(x)` | the methods of a Java object or class in the UI thread |
 | `is_java(x)` | `TRUE` for a Java object |
+| `bio7_plot3d(..., title, xlab, ylab, zlab, log, xlim, ylim, zlim, aspect, legend, colorbar, font, html, show, plot, record)` | shows the layers as 3D plot in the 3D view (`log = "z"`, `html`: also as WebGL page); `plot = p` updates a shown plot (in each step, the camera is kept), `record = rec` adds a frame to a recorder |
+| `bio7_scatter3d(x, y, z, label, color, size, values, colormap, alpha, drop_lines)` | points (`x` also a data frame or matrix with 3 columns; `values`: colored with the color map) |
+| `bio7_line3d(x, y, z, label, color, alpha, filled)` | a line (`filled`: down to the floor) |
+| `bio7_surface3d(x, y, z, label, colormap, color, alpha, mesh)` | a surface of the grid `z[i, j]` at `x[i]`, `y[j]` (a matrix as `outer(x, y, f)` or a function `f(x, y)`) |
+| `bio7_wireframe3d(x, y, z, label, color, colormap, alpha, step)` | a wireframe of a grid |
+| `bio7_bars3d(x, y, z, label, color, colormap, alpha, width)` | bars: `z` a vector (at the points) or a grid (e.g. a 2D histogram) |
+| `bio7_contour3d(x, y, z, levels, on_floor, label, color, colormap, alpha)` | the contour lines of a grid |
+| `bio7_pie3d(values, labels, colors, explode, height)` | a 3D pie chart (e.g. of a `table()`) |
+| `bio7_plot3d_clear()` | removes the 3D plot |
+| `bio7_histogram3d(x, names, bins, bin_width, density, colors)` | a histogram of values or of groups (a list or data frame: in the depth) |
+| `bio7_linegraph3d(x, series, names, colors, markers, marker_size, fill)` | line graphs of series over `x` (a matrix with a series in each column, a data frame or a list) |
+| `bio7_area3d(x, series, names, colors, stacked)` | an area chart of series over `x` |
+| `bio7_boxplot3d(groups, names, colors, width, outliers)`, `bio7_violin3d(groups, names, colors, width, bandwidth, quartiles)` | box plots and violins of groups (a list, data frame or matrix) |
+| `bio7_radar3d(series, axes, names, colors, max, rings)` | a radar chart (a matrix or data frame: a series in each row, an axis in each column) |
+| `bio7_rose3d(values, sectors, classes, colors, area_proportional, height, gap)` | a rose chart (e.g. a wind rose; a matrix `[sector, class]` stacked) |
+| `bio7_treemap3d(values, labels, colors, heights, show_values)` | a treemap (e.g. of a `table()`) |
+| `bio7_plot3d_recorder(speed, loop, autoplay, max_frames)` | records plots (`bio7_plot3d(..., record = rec, show = FALSE)`) as animation |
+| `bio7_plot3d_export(recorder, file, blender, open)` | the recording as HTML page (WebGL, Play/Pause, timeline), also for Blender |
+
+Colors: R color names, `"#RRGGBB"` or numbers `0xRRGGBB`. Color maps: `"viridis"`,
+`"rainbow"`, `"diverging"`, `"terrain"`, the name of an hcl palette of R (`hcl.pals()`,
+e.g. `"Plasma"`) or a vector of colors.
 
 Java arguments: an R number is converted to the parameter type (an integral number
 also for `int`), a vector to an array, a character string to `String`. Java

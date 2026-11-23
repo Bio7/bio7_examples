@@ -34,6 +34,8 @@ Start Python with the Python button of the main toolbar (or the console).
 | 22_Progress_and_Jobs.py | The progress of Python as Bio7 jobs: `bio7.progress`, `bio7.task`, tqdm, stopping a running script |
 | 23_Classes_Predator_Prey.py | An object-oriented program: several classes (inheritance) and a main class, a predator-prey model with a plot (Outline view, debugger, profiler) |
 | 24_Classes_in_Files/main.py | The same model with one class per file (modules of a folder): run main.py |
+| 25_3D_Plots.py | 3D plots (OpenGL) in the 3D view: `bio7.plot3d()` with `scatter3d`, `surface3d`, `contour3d`, `bars3d` (2D histogram), `line3d`, `wireframe3d`, `pie3d`, HTML export (WebGL) |
+| 26_3D_Dynamic_Plots.py | Dynamic 3D plots: an evolving histogram and growing line graphs updated in each step (`plot=p`), random walkers recorded as HTML animation (`bio7.plot3d_recorder()`), `boxplot3d`, `violin3d`, `area3d`, `radar3d`, `rose3d`, `treemap3d` |
 
 The Java API (`from bio7 import java`): `java.ij.IJ` (or `java.type("ij.IJ")`) is a class, calling it
 creates an object, its static methods and fields are attributes. Java objects are proxies with their
