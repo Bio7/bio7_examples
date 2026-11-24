@@ -1,58 +1,23 @@
 /*
+Transfers the active ImageJ image to R as a numeric matrix (RUtil, the API of the
+embedded R): the rows are the y values of the image (the first row is the top).
 
-This example transfers image data (8-bit)from ImageJ to R!
-Remove the if-condition if you want to be able to transfer RGB images!
+In R, e.g.: image(t(img[nrow(img):1, ]), col = gray.colors(256))
+*/
+import com.eco.bio7.rbridge.RUtil;
+import ij.WindowManager;
 
-Plot in R (with RGui R->Start RGui with...)e.g. with a matrix: 
-im<-matrix(p,width,height);image(im);
-
-The resulted image looks horizontally flipped because of the default y-origin
-of R plots (0,0 is bottom left in R!). 
-Transferred *.gif files look inverted because of the different display
-of the values.(*.jpegs files will be displayed normally!).
-
-Very slow (interpreted) in comparence with the "Compile and Run" option 
-(if you transfer this data directly with compiled code!)
-see: /Bio7Examples/Java_Snippets/Java_R_Snippets/Snippet3_ImageToR.java)*/
-
-import com.eco.bio7.rbridge.RBridge;
-import ij.*;
-import ij.gui.*;
-import ij.process.*;
-int[] p;
-int i = 0;
-int u = 0;
-/*Get the active image!*/
-ImagePlus imp = WindowManager.getCurrentImage();
-if (imp != null) {
-	/*Get the image processor of the image!*/
-	ImageProcessor ip = imp.getProcessor();
-	int w = ip.getWidth();
-	int h = ip.getHeight();
-	p=new int[w*h];
-	/*We proof if the image is an 8-bit image!*/
-	if (ip instanceof ByteProcessor) {
-		
-		for (int z = 0; z < h * w; z++) {
-
-		if (i> h) {
-			u++;
-			i = 0;
-		}
-		
-
-		else  {
-			i++;
-		}
-		p[z] = ip.getPixel(u,i);
-	}
-		RBridge.getBackend().assign("p",p);
-	}
-	else {
-		System.out.println("Requires an 8-bit image !");
-	}
-
-} 
-else {
-	System.out.println("No image opened !");
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
 }
+
+if (WindowManager.getCurrentImage() == null) {
+	System.out.println("No image opened!");
+	return;
+}
+/* null: the active image */
+RUtil.imageToR("img", null);
+System.out.println(RUtil.print("dim(img)"));
+/* And back: the image inverted in R as a new ImageJ image */
+RUtil.imageFromR("max(img) - img", "Inverted");

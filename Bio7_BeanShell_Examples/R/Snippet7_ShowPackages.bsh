@@ -1,10 +1,12 @@
-import com.eco.bio7.rbridge.RBridge;
-/*This example lists all installed packages in R!*/
+/* Lists all installed packages of R (RUtil, the API of the embedded R). */
+import com.eco.bio7.rbridge.RUtil;
 
-if(RBridge.getBackend()!=null){
-RBridge.getBackend().eval("pkg <- list(sort(.packages(all.available = TRUE)))");
-RTools.print("pkg");
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
 }
-else{
-	System.out.println("R is not running!");
+
+String[] installedPackages = RUtil.fromRStrings("sort(.packages(all.available = TRUE))");
+for (int i = 0; i < installedPackages.length; i++) {
+	System.out.println(installedPackages[i]);
 }

@@ -1,12 +1,14 @@
-import com.eco.bio7.rbridge.RBridge;
-/*Get data from OpenOffice, Excel, etc. from the clipboard, if available!*/
+/*
+Gets a table (e.g., copied from a spreadsheet) from the clipboard as the data frame
+"clip" (RUtil, the API of the embedded R). Linux requires xclip.
+*/
+import com.eco.bio7.rbridge.RUtil;
 
-if (RBridge.getBackend() != null) {
-	RBridge.getBackend().eval("try(clip<-read.delim(\"clipboard\"))");
-	System.out.println("Data in dataframe \"clip\":");
-	RTools.print("clip");
-} 
-else {
-	RTools.isAliveDialog();
-
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
 }
+
+RUtil.exec("clip <- read.delim(switch(Sys.info()[['sysname']], Windows = 'clipboard', Darwin = pipe('pbpaste'), pipe('xclip -o -selection clipboard')))");
+System.out.println("The data frame \"clip\":");
+System.out.println(RUtil.print("clip"));

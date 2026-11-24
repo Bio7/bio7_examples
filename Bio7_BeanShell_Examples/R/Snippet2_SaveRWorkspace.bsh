@@ -1,13 +1,13 @@
-import com.eco.bio7.rbridge.backend.RBackend;
-import com.eco.bio7.rbridge.RBridge;
-/*A simple example which produces data and stores it to an R file.*/
+/* Creates data in R and saves the workspace to a file (RUtil, the API of the embedded R). */
+import com.eco.bio7.rbridge.RUtil;
 
-RBackend c = RBridge.getBackend();
-if (c!= null) {
-c.voidEval("A<-c(3000,6000,8000,300,4)");
-c.voidEval("B<-c(13000,16000,18000,13000,1400)");
-c.voidEval("save.image(file =\"D:/data.RData\", version = NULL, ascii = FALSE)");
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
 }
-else {
-	Bio7Dialog.message("R is not running!");
-}
+
+RUtil.exec("A <- c(3000, 6000, 8000, 300, 4)");
+RUtil.exec("B <- c(13000, 16000, 18000, 13000, 1400)");
+/* The file in the temporary directory of R (change the path as you like) */
+RUtil.exec(".file <- file.path(tempdir(), 'data.RData'); save.image(file = .file)");
+System.out.println("Saved: " + RUtil.fromRString(".file"));

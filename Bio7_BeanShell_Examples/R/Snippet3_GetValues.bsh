@@ -1,28 +1,19 @@
-/* 
-This Snippet is an easy example how to get variables
-from R after a calculation!
-*/
-import com.eco.bio7.rbridge.backend.RBackend;
-import com.eco.bio7.rbridge.RBridge;
+/* Gets values from R after a calculation (RUtil, the API of the embedded R). */
+import com.eco.bio7.rbridge.RUtil;
 
-RBackend c = RBridge.getBackend();
-
-if (c!= null) {
-	
-	c.eval("A<-c(3,5,3,6)");
-	c.eval("B<-c(3,6,4,5)");
-	c.eval("C<-A+B");
-	//get the result from R
-	double[] result = (double[])c.eval("summary(A)").doubles();
-
-	RTools.print("C"); //easy print function to console
-
-	for (int i = 0; i < result.length; i++) {
-		System.out.print(result[i] + " ");
-	}
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
 }
 
-else {
-	
-	Bio7Dialog.message("R is not running!");
+RUtil.exec("A <- c(3, 5, 3, 6)");
+RUtil.exec("B <- c(3, 6, 4, 5)");
+RUtil.exec("C <- A + B");
+/* The result as Java array */
+double[] result = RUtil.fromRDoubles("summary(A)");
+for (int i = 0; i < result.length; i++) {
+	System.out.print(result[i] + " ");
 }
+System.out.println();
+/* The printed output of R */
+System.out.println(RUtil.print("C"));

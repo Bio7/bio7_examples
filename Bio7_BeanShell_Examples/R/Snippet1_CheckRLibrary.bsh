@@ -1,11 +1,14 @@
-import com.eco.bio7.rbridge.RBridge;
-/*This example checks if a library is available in R.*/
-if (RBridge.getBackend() != null) {
-	if (!RBridge.getBackend().eval("require(spe)").isTrue()) {
+/* Checks if a package is installed in R (RUtil, the API of the embedded R). */
+import com.eco.bio7.rbridge.RUtil;
 
-		Bio7Dialog.message("Cannot load 'spe' package!");
-	}
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
 }
-else {
-	Bio7Dialog.message("R is not running!");
+
+String packageName = "vegan";
+if (RUtil.fromRDouble("requireNamespace('" + packageName + "', quietly = TRUE)") != 1) {
+	Bio7Dialog.message("The package '" + packageName + "' is not installed!");
+} else {
+	System.out.println("The package '" + packageName + "' is installed.");
 }

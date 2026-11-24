@@ -1,31 +1,18 @@
-import com.eco.bio7.rbridge.RBridge;
 /*
-This Snippet can be used as a template for opening files
-This example opens a R workspace.
- */
+Opens an R workspace (an .RData file) selected in a dialog (RUtil, the API of the
+embedded R). A template for components which open files.
+*/
+import com.eco.bio7.rbridge.RUtil;
 
-
-if (RBridge.getBackend() != null) {
-
-	String file = Bio7Dialog.openFile();
-
-	String selected = file;
-	//For Windows!
-	selected = selected.replace("\\", "\\\\");
-	String load = "load(file =\"" + selected + "\")";
-	try {
-		
-		RBridge.getBackend().eval("try(" + load + ")");
-
-	} catch (RSrvException e) {
-
-		System.out.println(e.getMessage());
-	}
-
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
 }
 
-else {
-	Bio7Dialog.message("R is not running!");
+String file = Bio7Dialog.openFile();
+if (file != null) {
+	/* The path as value (no escaping of "\" on Windows) */
+	RUtil.toR(".file", new String[] { file });
+	RUtil.exec("load(file = .file); rm(.file)");
+	System.out.println("Loaded: " + file);
 }
-
-	

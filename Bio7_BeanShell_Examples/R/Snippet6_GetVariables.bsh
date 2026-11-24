@@ -1,70 +1,46 @@
 /*
-This is an example how to make a Java GUI for R methods.
-In this example a summary of selected, available variables is displayed. */
+A Java GUI for R: a summary of a selected variable of the R workspace
+(RUtil, the API of the embedded R).
+*/
+import com.eco.bio7.rbridge.RUtil;
+import javax.swing.*;
+import java.awt.event.*;
 
-import com.eco.bio7.rbridge.backend.RBackend;
-import com.eco.bio7.rbridge.RBridge;
-import com.eco.bio7.rffm.RValue;
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
+}
 
-//We proof if RTools is running!
-if(RTools.isAliveDialog()){
-//optional method: isAlive() -> without dialog!
-	
+/* All variables of the workspace */
+String[] v = RUtil.fromRStrings("ls(globalenv())");
 
-RBackend connection = RBridge.getBackend();	
-//Get all variables from the workspace!
-connection.eval("remove(variables)");
-connection.eval("remove(last.warning)");
-
-// Must add a placeholder before method asVector() works correctly!???
-connection.eval("empty<-0");
-
-// List all variables in workspace!
-connection.eval("variables<-ls()");
-
-RValue x = connection.eval("variables");
-String[] v=x.strings();
 JPanel panel = new JPanel();
-panel.setLayout( null );
-JLabel label=new JLabel();
-label.setBounds( 80, 55, 260, 20 );
-label.setText("Please select a Variable");
+panel.setLayout(null);
+JLabel label = new JLabel("Please select a variable");
+label.setBounds(80, 5, 260, 20);
 panel.add(label);
-        
-// We create a combobox!
 
 JComboBox combo = new JComboBox();
-public void itemStateChanged(ItemEvent event) {
-	if (event.getSource() == combo
-		&& event.getStateChange() == ItemEvent.SELECTED) {
-		// Evaluate and print it to the console!
-
-		RTools.print("summary(" + combo.getSelectedItem() + ")");
-
-	}
-}
-// The listener for the changes!
-combo.addItemListener(this);
-combo.setBounds( 20, 35, 260, 20 );
-panel.add( combo );
-	
-if (v != null && v.length >= 0) {
-
+combo.setBounds(20, 35, 260, 20);
+if (v.length > 0) {
 	for (int i = 0; i < v.length; i++) {
-
 		combo.addItem(v[i]);
-		combo.setEditable(true);
-
 	}
-
-}	
-				
-else{
-	 combo.addItem( "No variables available !" );
-	 combo.setEditable( false );    
-	}	
-	// Add it to the custom panel!
-	CustomView view=new CustomView();
-	view.setPanel(panel,"R-function");
-	
+} else {
+	combo.addItem("No variables available!");
 }
+/* The summary of the selected variable in the console (R in a thread: the GUI is not blocked) */
+itemStateChanged(ItemEvent event) {
+	if (event.getStateChange() == ItemEvent.SELECTED && v.length > 0) {
+		new Thread(new Runnable() {
+			public void run() {
+				System.out.println(RUtil.print("summary(" + combo.getSelectedItem() + ")"));
+			}
+		}).start();
+	}
+}
+combo.addItemListener(this);
+panel.add(combo);
+
+CustomView view = new CustomView();
+view.setPanel(panel, "R-function");

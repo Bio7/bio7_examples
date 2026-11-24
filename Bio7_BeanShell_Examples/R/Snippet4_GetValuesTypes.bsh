@@ -1,48 +1,33 @@
-/*
-Transfer different data types from R to Beanshell or Java!
-*/
+/* Transfers different types from R to BeanShell or Java (RUtil, the API of the embedded R). */
+import com.eco.bio7.rbridge.RUtil;
 
-import com.eco.bio7.rbridge.backend.RBackend;
-import com.eco.bio7.rbridge.RBridge;
-import com.eco.bio7.rffm.RValue;
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
+}
 
-RBackend c = RBridge.getBackend();
-if (RBridge.getBackend() != null) {
-	c.eval("A<-3");
-	/*Get the variable as double! */
-	double b = (double) c.eval("A").firstDouble();
-	System.out.println(b);
-	RTools.print("A"); //Print variables to console.
+RUtil.exec("A <- 3");
+double a = RUtil.fromRDouble("A");
+System.out.println(a);
 
-	/*We get a String from R!*/
-	c.eval("H<-'Hallo'");
-	String st = (String) c.eval("H").firstString();
-	System.out.println(st);
-	
-    /*A boolean value!*/
-	c.eval("bo<-TRUE");
-	RValue bol = c.eval("bo");
-    boolean[]bo=bol.booleans();
-	System.out.println(bo[0]);
-    
-	c.eval("a1<- c(10.456,20,15,43,76,41,25,46)");
-	c.eval("a2<- c(15,29,25,43,36,41,25,46)");
-	c.eval("a3<- c(15,20,95,43,76,71,25,36)");
-	c.eval("frame<-data.frame(a1,a2,a3)");//Create a data frame!
-	c.eval("matrix<-as.matrix(frame)");// Convert to a matrix!
-	c.eval("matrix<-t(matrix)");// Transpose!
-    /*We transfer a matrix as a 2d-array to Java!*/
-	double[][] frame = c.eval("matrix").matrix();
-	for (int i = 0; i < frame.length; i++) {
-		for (int u = 0; u < frame[0].length; u++) {
+RUtil.exec("H <- 'Hello'");
+String h = RUtil.fromRString("H");
+System.out.println(h);
 
-			System.out.println(frame[i][u]);
-		}
-		System.out.println("");
+/* Logical values as numbers (TRUE = 1, FALSE = 0) */
+RUtil.exec("bo <- c(TRUE, FALSE)");
+double[] bo = RUtil.fromRDoubles("bo");
+System.out.println(bo[0] == 1);
+
+int[] counts = RUtil.fromRInts("1:5");
+System.out.println(counts.length + " integers");
+
+/* A data frame as a matrix (the rows as Java arrays) */
+RUtil.exec("frame <- data.frame(a1 = c(10.456, 20, 15, 43), a2 = c(15, 29, 25, 43), a3 = c(15, 20, 95, 43))");
+double[][] m = RUtil.fromRMatrix("as.matrix(frame)");
+for (int i = 0; i < m.length; i++) {
+	for (int u = 0; u < m[i].length; u++) {
+		System.out.print(m[i][u] + " ");
 	}
-
-} 
-else {
-
-	Bio7Dialog.message("R is not running!");
+	System.out.println();
 }

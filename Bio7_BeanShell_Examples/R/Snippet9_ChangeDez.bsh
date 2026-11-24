@@ -1,11 +1,10 @@
-import com.eco.bio7.rbridge.RBridge;
-/*Change the decimal seperator for values ("," instead of ".")!*/
+/* Changes the decimal separator of the output of R ("," instead of ".") (RUtil, the API of the embedded R). */
+import com.eco.bio7.rbridge.RUtil;
 
-if (RBridge.getBackend() != null) {
-	RBridge.getBackend().eval("options(OutDec = \",\")");
-	
-} 
-else {
-	RTools.isAliveDialog();
-
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
 }
+
+RUtil.exec("options(OutDec = ',')");
+System.out.println(RUtil.print("pi"));

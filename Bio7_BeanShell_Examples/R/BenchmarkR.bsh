@@ -1,52 +1,33 @@
-import com.eco.bio7.rbridge.backend.RBackend;
-import com.eco.bio7.rbridge.RBridge;
 /*
-An R benchmark test with Java and BeanShell!
+An R benchmark with BeanShell (RUtil, the API of the embedded R): the time of R
+and the time of the data transfer to Java.
 */
-//import com.eco.bio7.rbridge.RState;
+import com.eco.bio7.rbridge.RUtil;
 
-if(RTools.isAliveDialog()){
-if(RState.isBusy()==false){	
-RBackend c=RBridge.getBackend();
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.");
+	return;
+}
+
 System.out.println("1000000 random numbers in R:");
-RTools.print("system.time(a<-runif(1000000)*10000)");
-System.out.println("The call from Java:");
+System.out.println(RUtil.print("system.time(a <- runif(1000000) * 10000)"));
+
 long time = System.currentTimeMillis();
-c.eval("runif(1000000)*10000");
-double timeOut = (double)(System.currentTimeMillis() - time)/1000;
-System.out.println("Time call Java: (seconds) " + timeOut);
+RUtil.exec("b <- runif(1000000) * 10000");
+System.out.println("The call from Java: " + (System.currentTimeMillis() - time) / 1000.0 + " s");
 
 time = System.currentTimeMillis();
-double []random = (double[]) c.eval("runif(1000000)*10000").doubles();
-
-//double random = (double) c.eval("random").firstDouble();
-timeOut = (double)(System.currentTimeMillis() - time)/1000;
-System.out.println("Time call+data transfer to Java: (seconds) " + timeOut);
-
-System.out.println("Pure data transfer 10000000 numbers:");
-long time = System.currentTimeMillis();
-double []fibonacci = (double[]) c.eval("a").doubles();
-double timeOut = (double)(System.currentTimeMillis() - time)/1000;
-System.out.println("Time transfer Java: (seconds) " + timeOut);
-c.eval("remove(a)");
-
-
-RBridge.getBackend().eval("a <- 0");
-RBridge.getBackend().eval("b <- 0");
-RBridge.getBackend().eval("phi <- 1.6180339887498949");
-RBridge.getBackend().eval("a <- floor(runif(750000)*1000)");
-RBridge.getBackend().eval("timing <- system.time(b <- (phi^a - (-phi)^(-a))/sqrt(5))");
-System.out.println("750000 Fibonacci Numbers in R: ");
-RTools.print("timing");
+double[] random = RUtil.fromRDoubles("runif(1000000) * 10000");
+System.out.println("The call and the transfer to Java: " + (System.currentTimeMillis() - time) / 1000.0 + " s");
 
 time = System.currentTimeMillis();
-RBridge.getBackend().eval("b <- (phi^a - (-phi)^(-a))/sqrt(5)");
-double []fibonacci = (double[]) c.eval("b").doubles();
-timeOut = (double)(System.currentTimeMillis() - time)/1000;
-System.out.println("Time call+data transfer to Java: (seconds) " + timeOut);
-c.eval("remove(a);remove(b);remove(phi);remove(timing)");
-}
-else{
-	System.out.println("R is busy!");
-}
-}
+double[] values = RUtil.fromRDoubles("a");
+System.out.println("The transfer of 1000000 numbers: " + (System.currentTimeMillis() - time) / 1000.0 + " s");
+
+RUtil.exec("phi <- 1.6180339887498949; n <- floor(runif(750000) * 1000)");
+System.out.println("750000 Fibonacci numbers in R:");
+System.out.println(RUtil.print("system.time(f <- (phi^n - (-phi)^(-n)) / sqrt(5))"));
+time = System.currentTimeMillis();
+double[] fibonacci = RUtil.fromRDoubles("(phi^n - (-phi)^(-n)) / sqrt(5)");
+System.out.println("The call and the transfer to Java: " + (System.currentTimeMillis() - time) / 1000.0 + " s");
+RUtil.exec("rm(a, b, phi, n, f)");
