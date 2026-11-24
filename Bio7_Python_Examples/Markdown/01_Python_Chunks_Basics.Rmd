@@ -14,7 +14,7 @@ below the chunk. Python is started automatically if it is not running.
 The variables are created in the workspace of Python (`__main__`): they are
 available in the following chunks, the console and the Python-Shell view.
 
-```when{python setup}
+```{python setup}
 import numpy as np
 import pandas as pd
 
