@@ -14,8 +14,9 @@
 # Requires: numpy (tqdm optional)
 
 import time
-import numpy as np
+
 import bio7
+import numpy as np
 
 rng = np.random.default_rng(1)
 

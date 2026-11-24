@@ -7,13 +7,13 @@
 #
 # Requires: numpy, pandas, scipy, scikit-image, matplotlib, seaborn
 
+import bio7
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import ndimage as ndi
 from skimage import filters, measure, segmentation
-import bio7
 
 try:
     img = bio7.image()
