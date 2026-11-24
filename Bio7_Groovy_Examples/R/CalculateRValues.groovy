@@ -1,28 +1,20 @@
-/* 
-This Groovy Snippet is an easy example how to get variables
-from R after a calculation!
+/*
+Get values from R after a calculation (RUtil, the API of the embedded R).
 */
-import com.eco.bio7.rbridge.backend.RBackend;
-import com.eco.bio7.rbridge.*;
+import com.eco.bio7.rbridge.RUtil
 
-RBackend c = RBridge.getBackend();
-
-if (c!= null) {
-	
-	c.eval("A<-c(3,5,3,6)");
-	c.eval("B<-c(3,6,4,5)");
-	c.eval("C<-A+B");
-	//get the result from R
-	double[] result = (double[])c.eval("summary(A)").doubles();
-
-	RTools.print("C"); //easy print function to console
-
-	for (int i = 0; i < result.length; i++) {
-		System.out.print(result[i] + " ");
-	}
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.")
+	return
 }
-
-else {
-	
-	Bio7Dialog.message("R is not running!");
+RUtil.exec("A <- c(3, 5, 3, 6)")
+RUtil.exec("B <- c(3, 6, 4, 5)")
+RUtil.exec("C <- A + B")
+/* The results as Java values */
+double[] summary = RUtil.fromRDoubles("summary(A)")
+String[] names = RUtil.fromRStrings("names(summary(A))")
+for (int i = 0; i < summary.length; i++) {
+	println(names[i] + ": " + summary[i])
 }
+/* The printed output of R (as in the console) */
+println(RUtil.print("C"))

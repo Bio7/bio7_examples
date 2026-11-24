@@ -19,9 +19,8 @@ import tempfile
 import time
 import webbrowser
 
-import numpy as np
-
 import bio7
+import numpy as np
 
 rng = np.random.default_rng(7)
 

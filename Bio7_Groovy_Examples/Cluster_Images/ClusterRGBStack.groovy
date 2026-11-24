@@ -1,49 +1,51 @@
 /*
-This example transfers RGB images of a stack to R clusters them (kmeans) and saves them
-to the specified directory (please adjust below!).
-Please note that values from R will be transferred back to the ImageJ-Canvas then the resulted
-image will be saved and closed before the next image of the stack will be transferred to R!
+Clusters the RGB images of a stack in R (kmeans) and saves the clustered images
+in a directory (RUtil, the API of the embedded R).
 
-Please load e.g. a sequenze of RGB images as a (virtual) stack to see the results
-(Drag a folder of images on the canvas or toolbar)!
-
+Load, e.g., a sequence of RGB images as a (virtual) stack before
+(drag a folder of images on the ImageJ canvas or toolbar).
 */
-import ij.IJ;
-import ij.ImagePlus;
-import ij.WindowManager;
-import static com.eco.bio7.rbridge.REval.*;
-import static com.eco.bio7.image.ImageMethods.*;
+import ij.IJ
+import ij.ImagePlus
+import ij.WindowManager
+import ij.process.ByteProcessor
+import com.eco.bio7.rbridge.RUtil
 
-String dirOut = Bio7Dialog.directory("Choose the output directory!");
-if (dirOut != null) {
-	if (RTools.isAliveDialog()) {
-		int slice = 1;
-		double timeOut;
-		long time;
-		//Calculate the stack size!
-		imp = WindowManager.getCurrentImage();
-		if (imp != null) {
-			int size = imp.getStackSize();
-			while (slice <= size) {
-				time = System.currentTimeMillis();
-
-				IJ.run("Set Slice...", "slice=" + slice);
-				/*Transfer as integer! ->0=double, 1=integer, 2=byte, 3=RGB byte*/
-				imageToR("RGBMatrix", true, 3, null);
-				evalR("cl<-kmeans(RGBMatrix,6)", null);
-				timeOut = (double) (System.currentTimeMillis() - time) / 1000;
-				System.out.println("Time: (seconds) " + timeOut + " Fps: " + 1 / timeOut);
-				/*In Groovy we have to escape the $ char in strings!*/
-				evalR("imageCluster<-as.raw(cl\$cluster)", null);
-				imageFromR(3, "imageCluster", 1);
-				/*Save the clustered image result as a *.tiff!*/
-				IJ.save(IJ.getImage(), dirOut + "/image" + slice + ".tiff");
-				IJTabs.deleteActiveTab();
-				slice++;
-			}
-		} else {
-			Bio7Dialog.message("No image opened in ImageJ!");
-		}
+/* The R, G and B values of an image as a matrix in R (one row per pixel, the columns r, g and b) */
+def rgbToR(String name, ImagePlus imp) {
+	int[] px = (int[]) imp.getProcessor().convertToRGB().getPixels()
+	int[] r = new int[px.length], g = new int[px.length], b = new int[px.length]
+	for (int i = 0; i < px.length; i++) {
+		r[i] = (px[i] >> 16) & 0xff; g[i] = (px[i] >> 8) & 0xff; b[i] = px[i] & 0xff
 	}
+	RUtil.dataFrameToR(".rgb", [r: r, g: g, b: b])
+	RUtil.exec(name + " <- as.matrix(.rgb); rm(.rgb)")
 }
 
+if (!RUtil.isAlive()) {
+	Bio7Dialog.message("R is not running! Please start R first.")
+	return
+}
+ImagePlus imp = WindowManager.getCurrentImage()
+if (imp == null) {
+	Bio7Dialog.message("No image opened in ImageJ!")
+	return
+}
+String dirOut = Bio7Dialog.directory("Choose the output directory!")
+if (dirOut == null) {
+	return
+}
+int w = imp.getWidth(), h = imp.getHeight()
+for (int slice = 1; slice <= imp.getStackSize(); slice++) {
+	long time = System.currentTimeMillis()
+	rgbToR("RGBMatrix", new ImagePlus("slice", imp.getStack().getProcessor(slice)))
+	RUtil.exec("cl <- kmeans(RGBMatrix, 6)")
+	/* The clusters (1-6) as an 8-bit image: the pixels in the order of the rows */
+	int[] cluster = RUtil.fromRInts("cl\$cluster")
+	ByteProcessor bp = new ByteProcessor(w, h)
+	for (int i = 0; i < cluster.length; i++) {
+		bp.set(i, cluster[i] * 40)
+	}
+	IJ.save(new ImagePlus("cluster" + slice, bp), dirOut + "/image" + slice + ".tif")
+	println("Slice " + slice + ": " + (System.currentTimeMillis() - time) / 1000.0 + " s")
+}
