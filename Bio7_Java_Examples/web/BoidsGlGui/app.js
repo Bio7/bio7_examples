@@ -1,5 +1,5 @@
 // Boids in 3D with WebGL: the JavaScript of the WindowBuilder JavaScript example
-// (the design: src/webgui/BoidsGlGui.java, the page: index.html created from it).
+// (the design: src/gui/web/BoidsGlGui.java, the page: index.html created from it).
 // Bio7 writes this file only once: this code stays when index.html is created again.
 //
 // Each boid steers by three rules of its neighbours (Reynolds 1987): separation

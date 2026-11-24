@@ -1,3 +1,0 @@
-System.out.println("Summary first run:");
-RTools.print("summary_one");
-RTools.print("summary_two");

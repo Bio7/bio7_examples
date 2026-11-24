@@ -12,7 +12,7 @@ import com.eco.bio7.collection.CustomView;
 import com.eco.bio7.pybridge.PythonUtil;
 import com.eco.bio7.pyffm.PyValue;
 
-import gui.BackgroundJob;
+import gui.swt.BackgroundJob;
 import python.PythonExamples;
 
 /*

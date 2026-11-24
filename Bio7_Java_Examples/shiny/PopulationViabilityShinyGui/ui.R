@@ -1,5 +1,5 @@
 # The user interface of the Shiny app, created by Bio7 (WindowBuilder Shiny)
-# from the GUI class PopulationViabilityShinyGui.java (/Bio7_Java_Examples/src/shinygui).
+# from the GUI class PopulationViabilityShinyGui.java (/Bio7_Java_Examples/src/gui/shiny).
 # Change the GUI with the WindowBuilder and create the app again: this file is
 # written again (the code of server.R stays).
 library(shiny)

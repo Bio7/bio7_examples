@@ -15,7 +15,7 @@ import com.eco.bio7.collection.CustomView;
 import com.eco.bio7.pybridge.PythonUtil;
 import com.eco.bio7.pyffm.PyValue;
 
-import gui.BackgroundJob;
+import gui.swt.BackgroundJob;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
@@ -37,7 +37,7 @@ import python.PythonExamples;
  * become an ImageJ stack (optional) and are shown live (optional).
  *
  * The frames come from OpenCV in the embedded Python (camera_capture.py in
- * Bio7_Script_Examples/Python/OpenCV), each frame is an ImageJ processor in
+ * Bio7_Python_Examples/OpenCV), each frame is an ImageJ processor in
  * Java. A video file can be used instead of the camera (Source: its path).
  *
  * The GUI is in CameraRecorderGui (WindowBuilder: Open With > WindowBuilder Editor).

@@ -1,1 +1,7 @@
-*.DS_Store
+.DS_Store
+__pycache__/
+*.pyc
+.settings/
+Bio7_Java_Examples/bin/
+*.class
+!Bio7_Java_Examples/src/imagej/AntiClumpDetector.class

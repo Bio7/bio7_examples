@@ -1,5 +1,5 @@
 // The JavaScript of the widget example (WindowBuilder JavaScript; the design:
-// src/wbwidgets/AllWidgetsGui.java, index.html is created from it). Bio7 writes this
+// src/gui/windowbuilder/AllWidgetsGui.java, index.html is created from it). Bio7 writes this
 // file only once: this code stays when index.html is created again.
 //
 // Each widget of the design is an HTML element with the name of its variable as id

@@ -1,5 +1,5 @@
 // The forest fire model (Drossel and Schwabl, a cellular automaton): the JavaScript of
-// the WindowBuilder JavaScript example (the design: src/webgui/ForestFireGui.java, the
+// the WindowBuilder JavaScript example (the design: src/gui/web/ForestFireGui.java, the
 // page: index.html created from it). Bio7 writes this file only once: this code stays
 // when index.html is created again.
 //

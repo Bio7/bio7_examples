@@ -1,5 +1,5 @@
 // Epidemic (the SIR model): the JavaScript of the WindowBuilder JavaScript example
-// (the design: src/webgui/EpidemicGui.java, the page: index.html created from it).
+// (the design: src/gui/web/EpidemicGui.java, the page: index.html created from it).
 // Bio7 writes this file only once: this code stays when index.html is created again.
 //
 //   dS/dt = -beta S I     dI/dt = beta S I - gamma I     dR/dt = gamma I

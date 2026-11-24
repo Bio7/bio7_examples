@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Display;
 import com.eco.bio7.collection.CustomView;
 import com.eco.bio7.rbridge.RUtil;
 
-import gui.BackgroundJob;
+import gui.swt.BackgroundJob;
 
 /*
  * A Java GUI for an R model: the Lotka-Volterra predator-prey model with a

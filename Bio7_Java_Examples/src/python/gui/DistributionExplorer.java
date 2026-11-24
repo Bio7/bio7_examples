@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Display;
 import com.eco.bio7.collection.CustomView;
 import com.eco.bio7.pybridge.PythonUtil;
 
-import gui.BackgroundJob;
+import gui.swt.BackgroundJob;
 import python.PythonExamples;
 
 /*

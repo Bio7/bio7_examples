@@ -1,5 +1,5 @@
 # The server of the predator-prey app (WindowBuilder Shiny example; the design:
-# src/shinygui/PredatorPreyShinyGui.java, ui.R is created from it). Bio7 writes this
+# src/gui/shiny/PredatorPreyShinyGui.java, ui.R is created from it). Bio7 writes this
 # file only once: this code stays when ui.R is created again.
 #
 #   dN/dt = r N (1 - N / K) - a N P        (the prey, logistic growth)

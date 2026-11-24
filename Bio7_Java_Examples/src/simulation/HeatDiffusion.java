@@ -11,6 +11,10 @@ import com.eco.bio7.simulation.ValueGridModel;
  * <p>
  * Compile the class, start the simulation with the Play/Pause button and add
  * heat sources with the buttons of the "Settings" view.
+ * <p>
+ * The mouse and the keyboard in the view (also in the HTML export): a click
+ * adds a heat source at the cell, a drag warms the plate along the way, the key
+ * c cools the plate, r removes the sources (the methods click, drag and key).
  */
 public class HeatDiffusion extends ValueGridModel {
 
@@ -74,6 +78,42 @@ public class HeatDiffusion extends ValueGridModel {
 			for (int x = -2; x <= 2; x++) {
 				source[(cy + y) * width + cx + x] = 1;
 				values[(cy + y) * width + cx + x] = 1;
+			}
+		}
+		applyColors();
+	}
+
+	/** A click in the view: a heat source (5 x 5 cells) at the cell. */
+	public void click(double x, double y) {
+		heat((int) x, (int) y, 2, true);
+	}
+
+	/** A drag in the view: heat along the way (3 x 3 cells, no source). */
+	public void drag(double x, double y) {
+		heat((int) x, (int) y, 1, false);
+	}
+
+	/** A key in the view: c cools the plate (not the sources), r removes the sources. */
+	public void key(String key) {
+		if (key.equals("c")) {
+			for (int i = 0; i < values.length; i++) {
+				values[i] = source[i] == 1 ? 1 : 0;
+			}
+		} else if (key.equals("r")) {
+			removeSources();
+		}
+	}
+
+	/* The cells around (cx, cy) get the temperature 1 (a source: they keep it) */
+	void heat(int cx, int cy, int r, boolean permanent) {
+		for (int y = cy - r; y <= cy + r; y++) {
+			for (int x = cx - r; x <= cx + r; x++) {
+				if (x >= 0 && y >= 0 && x < width && y < height) {
+					values[y * width + x] = 1;
+					if (permanent) {
+						source[y * width + x] = 1;
+					}
+				}
 			}
 		}
 		applyColors();

@@ -1,5 +1,5 @@
 # The server of the food chain app (WindowBuilder Shiny with 3D; the design:
-# src/wbgl/FoodChainGlGui.java, ui.R is created from it). Bio7 writes this file only
+# src/gui/windowbuilder/FoodChainGlGui.java, ui.R is created from it). Bio7 writes this file only
 # once: this code stays when ui.R is created again.
 #
 # The canvas glAttractor of the design (its name starts with "gl") is a 3D view of

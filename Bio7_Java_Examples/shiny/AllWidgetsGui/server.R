@@ -1,5 +1,5 @@
 # The server of the widget example (WindowBuilder Shiny; the design:
-# src/wbwidgets/AllWidgetsGui.java, ui.R is created from it). Bio7 writes this file
+# src/gui/windowbuilder/AllWidgetsGui.java, ui.R is created from it). Bio7 writes this file
 # only once: this code stays when ui.R is created again.
 #
 # Each widget of the design is an input or an output of Shiny with the name of its

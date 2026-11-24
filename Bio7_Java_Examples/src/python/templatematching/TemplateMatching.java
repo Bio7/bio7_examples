@@ -12,12 +12,12 @@ import com.eco.bio7.collection.CustomView;
 import com.eco.bio7.pybridge.PythonUtil;
 import com.eco.bio7.pyffm.PyValue;
 
-import gui.BackgroundJob;
+import gui.swt.BackgroundJob;
 import python.PythonExamples;
 
 /*
  * A Java GUI (SWT, in a view of Bio7) for the Python functions of the
- * template matching with OpenCV (Bio7_Script_Examples/Python/OpenCV/
+ * template matching with OpenCV (Bio7_Python_Examples/OpenCV/
  * template_matching.py): a test image, templates from ImageJ selections, the
  * detection with method, threshold and multi-scale, the matches in a table and
  * selected in ImageJ.

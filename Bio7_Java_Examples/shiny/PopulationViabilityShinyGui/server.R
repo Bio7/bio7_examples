@@ -1,5 +1,5 @@
 # The server of the population viability app (WindowBuilder Shiny example; the design:
-# src/shinygui/PopulationViabilityShinyGui.java, ui.R is created from it). Bio7 writes
+# src/gui/shiny/PopulationViabilityShinyGui.java, ui.R is created from it). Bio7 writes
 # this file only once: this code stays when ui.R is created again.
 #
 # Each year every individual gets Poisson offspring (the birth rate falls with the

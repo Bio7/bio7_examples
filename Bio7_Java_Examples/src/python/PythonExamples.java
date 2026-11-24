@@ -11,7 +11,7 @@ import com.eco.bio7.pyffm.PyValue;
 
 /*
  * Helpers of the Java examples which use Python: the folder of the Python
- * examples (in the project Bio7_Script_Examples of the workspace) and the
+ * examples (in the project Bio7_Python_Examples of the workspace) and the
  * conversion of Python values.
  */
 public class PythonExamples {
@@ -20,19 +20,19 @@ public class PythonExamples {
 
 	/**
 	 * A folder of the Python examples, e.g. folder("OpenCV"): in the project
-	 * Bio7_Script_Examples of the workspace, else selected once in a directory
+	 * Bio7_Python_Examples of the workspace, else selected once in a directory
 	 * dialog of Bio7.
 	 */
 	public static Path folder(String name) {
-		Path p = Path.of(FileRoot.getWorkspacePath(), "Bio7_Script_Examples", "Python", name);
+		Path p = Path.of(FileRoot.getWorkspacePath(), "Bio7_Python_Examples", name);
 		if (Files.isDirectory(p)) {
 			return p;
 		}
 		Path chosen = CHOSEN.get(name);
 		if (chosen == null) {
-			String dir = Bio7Dialog.directory("Select the folder Python/" + name + " of the Bio7 examples");
+			String dir = Bio7Dialog.directory("Select the folder " + name + " of the Bio7 examples");
 			if (dir == null) {
-				throw new IllegalStateException("The folder Python/" + name + " of the Bio7 examples was not found (project Bio7_Script_Examples)");
+				throw new IllegalStateException("The folder " + name + " of the Python examples was not found (project Bio7_Python_Examples)");
 			}
 			chosen = Path.of(dir);
 			CHOSEN.put(name, chosen);

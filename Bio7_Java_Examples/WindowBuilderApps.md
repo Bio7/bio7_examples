@@ -83,13 +83,13 @@ Absolute positions (no layout) are not carried over: the pages are responsive.
 
 | Example | Design | Shiny | JavaScript |
 |---|---|---|---|
-| **All widgets** (this table, with the values of all inputs) | `src/wbwidgets/AllWidgetsGui.java` | `shiny/AllWidgetsGui` | `web/AllWidgetsGui` |
-| Predator and prey | `src/shinygui/PredatorPreyShinyGui.java` | `shiny/PredatorPreyShinyGui` | |
-| Population viability | `src/shinygui/PopulationViabilityShinyGui.java` | `shiny/PopulationViabilityShinyGui` | |
-| Epidemic (SIR) | `src/webgui/EpidemicGui.java` | | `web/EpidemicGui` |
-| Forest fire | `src/webgui/ForestFireGui.java` | | `web/ForestFireGui` |
-| Boids in 3D (WebGL) | `src/webgui/BoidsGlGui.java` | | `web/BoidsGlGui` |
-| **Food chain in 3D** (a `Canvas` named `glAttractor`: rgl and WebGL from one design) | `src/wbgl/FoodChainGlGui.java` | `shiny/FoodChainGlGui` | `web/FoodChainGlGui` |
+| **All widgets** (this table, with the values of all inputs) | `src/gui/windowbuilder/AllWidgetsGui.java` | `shiny/AllWidgetsGui` | `web/AllWidgetsGui` |
+| Predator and prey | `src/gui/shiny/PredatorPreyShinyGui.java` | `shiny/PredatorPreyShinyGui` | |
+| Population viability | `src/gui/shiny/PopulationViabilityShinyGui.java` | `shiny/PopulationViabilityShinyGui` | |
+| Epidemic (SIR) | `src/gui/web/EpidemicGui.java` | | `web/EpidemicGui` |
+| Forest fire | `src/gui/web/ForestFireGui.java` | | `web/ForestFireGui` |
+| Boids in 3D (WebGL) | `src/gui/web/BoidsGlGui.java` | | `web/BoidsGlGui` |
+| **Food chain in 3D** (a `Canvas` named `glAttractor`: rgl and WebGL from one design) | `src/gui/windowbuilder/FoodChainGlGui.java` | `shiny/FoodChainGlGui` | `web/FoodChainGlGui` |
 
 The example **All widgets** uses one design for both apps: each label of the design
 names the widget and what it becomes; the tab Outputs shows the values of all inputs

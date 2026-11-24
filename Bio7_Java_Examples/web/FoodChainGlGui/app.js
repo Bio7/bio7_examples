@@ -1,5 +1,5 @@
 // The JavaScript of the food chain app (WindowBuilder JavaScript with WebGL; the
-// design: src/wbgl/FoodChainGlGui.java, index.html is created from it). Bio7 writes
+// design: src/gui/windowbuilder/FoodChainGlGui.java, index.html is created from it). Bio7 writes
 // this file only once: this code stays when index.html is created again.
 //
 // The canvas glAttractor of the design (its name starts with "gl") is a canvas with

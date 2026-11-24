@@ -1,0 +1,5 @@
+# Bio7 simulation examples (CC0)
+newmtl bark
+Kd 0.42 0.29 0.18
+newmtl leaves
+Kd 0.24 0.55 0.25
