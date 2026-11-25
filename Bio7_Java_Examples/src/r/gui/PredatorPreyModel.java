@@ -58,8 +58,8 @@ public class PredatorPreyModel extends com.eco.bio7.compile.Model {
 	private volatile double[] pending;
 
 	public PredatorPreyModel() {
-		if (!RUtil.isAlive()) {
-			System.out.println("The embedded R is not running: please start R first!");
+		if (!RUtil.start()) {
+			System.out.println("R could not be started (see the console)!");
 			return;
 		}
 		CustomView view = new CustomView();

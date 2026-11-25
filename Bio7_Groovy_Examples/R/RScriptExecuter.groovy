@@ -8,8 +8,8 @@ can be used in between. REval.displayPlotEvent() shows the plots made so far at 
 import com.eco.bio7.rbridge.RUtil
 import com.eco.bio7.rbridge.REval
 
-if (!RUtil.isAlive()) {
-	Bio7Dialog.message("R is not running! Please start R first.")
+if (!RUtil.start()) {
+	Bio7Dialog.message("R could not be started (see the console)!")
 	return
 }
 panels = """

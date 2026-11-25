@@ -23,8 +23,8 @@ def rgbToR(String name, ImagePlus imp) {
 	RUtil.exec(name + " <- as.matrix(.rgb); rm(.rgb)")
 }
 
-if (!RUtil.isAlive()) {
-	message("R is not running! Please start R first.")
+if (!RUtil.start()) {
+	message("R could not be started (see the console)!")
 	return
 }
 /* Several files: select them with Shift+click or Ctrl+click */

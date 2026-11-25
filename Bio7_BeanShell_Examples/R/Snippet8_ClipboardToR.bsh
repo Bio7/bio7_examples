@@ -4,8 +4,8 @@ Gets a table (e.g., copied from a spreadsheet) from the clipboard as the data fr
 */
 import com.eco.bio7.rbridge.RUtil;
 
-if (!RUtil.isAlive()) {
-	Bio7Dialog.message("R is not running! Please start R first.");
+if (!RUtil.start()) {
+	Bio7Dialog.message("R could not be started (see the console)!");
 	return;
 }
 

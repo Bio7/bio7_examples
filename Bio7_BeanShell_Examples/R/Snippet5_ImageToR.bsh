@@ -7,8 +7,8 @@ In R, e.g.: image(t(img[nrow(img):1, ]), col = gray.colors(256))
 import com.eco.bio7.rbridge.RUtil;
 import ij.WindowManager;
 
-if (!RUtil.isAlive()) {
-	Bio7Dialog.message("R is not running! Please start R first.");
+if (!RUtil.start()) {
+	Bio7Dialog.message("R could not be started (see the console)!");
 	return;
 }
 

@@ -22,8 +22,8 @@ def rgbToR(String name, ImagePlus imp) {
 	RUtil.exec(name + " <- as.matrix(.rgb); rm(.rgb)")
 }
 
-if (!RUtil.isAlive()) {
-	Bio7Dialog.message("R is not running! Please start R first.")
+if (!RUtil.start()) {
+	Bio7Dialog.message("R could not be started (see the console)!")
 	return
 }
 ImagePlus imp = WindowManager.getCurrentImage()

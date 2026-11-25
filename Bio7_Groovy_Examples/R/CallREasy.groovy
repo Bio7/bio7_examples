@@ -5,8 +5,8 @@ The script runs in a job of Bio7, thus the R calls don't block Bio7.
 */
 import com.eco.bio7.rbridge.RUtil
 
-if (!RUtil.isAlive()) {
-	Bio7Dialog.message("R is not running! Please start R first.")
+if (!RUtil.start()) {
+	Bio7Dialog.message("R could not be started (see the console)!")
 	return
 }
 for (int i = 1; i < 5; i++) {

@@ -18,8 +18,8 @@ import com.eco.bio7.rbridge.RUtil;
 public class JavaModelAnalysedInR {
 
 	public static void main(String[] args) throws Exception {
-		if (!RUtil.isAlive()) {
-			System.out.println("The embedded R is not running: please start R first!");
+		if (!RUtil.start()) {
+			System.out.println("R could not be started (see the console)!");
 			return;
 		}
 

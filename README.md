@@ -20,7 +20,7 @@ The simulations of Java, R and Python read their images, 3D models and geodata f
 `data` of their project.
 
 **Clone:** the flows store the workspace paths of their scripts (e.g.
-`/Bio7_Flow_Examples/Examples/Snippet1/xdirection.bsh`), so keep the project names when you import
+`/Bio7_Flow_Examples/Models/1_Harvest/harvest_analysis.R`), so keep the project names when you import
 the projects.
 
 **Earlier versions** had two projects, Bio7_Java_Examples and Bio7_Script_Examples. If you
