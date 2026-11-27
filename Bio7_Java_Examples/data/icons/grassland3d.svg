@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The perspective icon of the grassland examples on the globe (3D): a globe with a grass tuft on top -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g fill="none" stroke="#638d43" stroke-width="1.2">
+    <circle cx="8" cy="10.2" r="5.1"/>
+    <ellipse cx="8" cy="10.2" rx="2.1" ry="5.1"/>
+    <path d="M3.2 8.6 H12.8 M3.2 11.8 H12.8"/>
+  </g>
+  <g fill="none" stroke="#b03a8a" stroke-width="1.2" stroke-linecap="round">
+    <path d="M7.6 5 C7.2 3.6 6.4 2.6 5.4 2"/>
+    <path d="M8 5 C8 3.4 8 2.2 8 0.9"/>
+    <path d="M8.4 5 C8.8 3.6 9.6 2.6 10.6 2"/>
+  </g>
+</svg>

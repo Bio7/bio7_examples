@@ -1,0 +1,9 @@
+/*
+Decision "Too few deer?" = true (in the loop of Adaptive_Management.flow):
+no hunting in the next year, the population can recover.
+A BeanShell step: it sets the quota in R with the RUtil API of Bio7.
+*/
+import com.eco.bio7.rbridge.RUtil;
+
+RUtil.exec("deerQuota <- 0; deerAction <- 'no hunting'");
+System.out.println("  Management: no hunting (the population is below " + (int) RUtil.fromRDouble("deerPar$lower") + ")");

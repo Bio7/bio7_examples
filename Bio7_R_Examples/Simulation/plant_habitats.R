@@ -15,7 +15,7 @@
 # neighbor. Each year all seeds and shoots are collected; the first one which arrives in a cell (a
 # lottery) may establish there. Without disturbance the strongest competitor of a habitat takes
 # over (competitive exclusion); disturbance (gaps) keeps weaker species in the habitat. The panel
-# beside the map summarizes each habitat: the species which fit it by their indicator values (the
+# beside the map (an ImageJ overlay: sharp at each zoom; each plant a filled oval on its habitat) summarizes each habitat: the species which fit it by their indicator values (the
 # mean suitability at least 0.5: they can settle) and the species which grow there now.
 #
 # The indicator values after Ellenberg et al. (Zeigerwerte von Pflanzen in Mitteleuropa, Scripta
@@ -30,7 +30,11 @@ m$param("patches", 16, min = 6, max = 40, label = "Patches of the landscape", re
 m$param("disturbance", 0.05, min = 0, max = 0.1, step = 0.005, label = "Disturbance (share of the cells cleared per year)", group = "Landscape")
 m$param("view", "Species", options = c("Species", "Habitats"), label = "View", group = "Landscape")
 
-W <- 120; H <- 80; PW <- 48
+W <- 120; H <- 80; PW <- 79
+# The display: each cell of the landscape is K x K cells of the image - the color of the habitat with a
+# filled oval of the species (diameter 5 of 7, a border of the habitat between neighbors)
+K <- 7
+DOT <- outer(0:(K - 1), 0:(K - 1), function(a, b) (a - (K - 1) / 2)^2 + (b - (K - 1) / 2)^2 <= 2.5^2)
 HABITATS <- c("Beech forest", "Calcareous grassland", "Wet meadow", "Raised bog", "Ruderal margin", "River bank")
 SITE <- rbind(c(3, 5, 6, 5), c(8, 3, 8, 3), c(7, 8, 6, 5), c(8, 9, 1, 1), c(7, 5, 7, 8), c(7, 10, 7, 7))   # L, F, R, N
 SHORT <- c("Beech", "Wood sorrel", "Woodruff", "Upright brome", "Meadow clary", "Marsh marigold", "Meadowsweet", "Sundew", "Heather",
@@ -100,40 +104,53 @@ settle <- function(m, s, target, fit) {
 names_of <- function(value, minimum, count, percent) {
   o <- order(-value); o <- o[value[o] >= minimum][seq_len(min(count, sum(value >= minimum)))]
   if (!length(o)) return("none")
-  paste(paste0(SHORT[o], if (percent) paste0(" ", round(value[o]), " %") else ""), collapse = ", ")
+  paste(paste0(SHORT[o], if (percent) paste0(" ", round(value[o]), "%") else ""), collapse = ", ")
 }
 
 show_habitats <- function(m) {
-  grid <- matrix(NH + NS, H, W + PW)
-  land <- if (m$view == "Habitats") NH + NS + 1 + m$habitat else ifelse(m$species == 0, m$habitat, NH + m$species - 1)
-  grid[, 1:W] <- matrix(land, H, W, byrow = TRUE)
+  # the map: the habitat (pale) of each cell with an oval of its species, or the habitats (view Habitats)
+  block <- matrix(1L, K, K)
+  habitat <- matrix(m$habitat, H, W, byrow = TRUE)
+  if (m$view == "Habitats") {
+    land <- kronecker(NH + NS + 1L + habitat, block)
+  } else {
+    land <- kronecker(habitat, block)
+    species <- kronecker(matrix(m$species, H, W, byrow = TRUE), block)
+    dot <- kronecker(matrix(1L, H, W), DOT * 1L) > 0 & species > 0
+    land[dot] <- NH + species[dot] - 1L
+  }
+  grid <- matrix(NH + NS, H * K, (W + PW) * K)
+  grid[, 1:(W * K)] <- land
   m$cells[] <- as.integer(grid)
-  ty <- 3
-  m$draw_text(W + 2, ty, "Settled species (% of the cells)", "#111111", 2.4)
-  ty <- ty + 4
+  text <- function(x, y, t, color, size) m$draw_text(K * x, K * y, t, color, K * size, overlay = TRUE)
+  square <- function(x, y, size, color) m$draw_rect(K * x, K * y, K * size, K * size, color, NULL, overlay = TRUE)
+  # the panel as an ImageJ overlay (sharp at each zoom, Image > Overlay > Hide Overlay hides it)
+  ty <- 3.6
+  text(W + 2, ty, "Settled species (% of the cells)", "#111111", 3.0)
+  ty <- ty + 4.6
   for (h in 1:NH) {
     inh <- m$habitat == h - 1
     share <- 100 * vapply(1:NS, function(s) sum(inh & m$species == s), 0) / max(1, sum(inh))
     m$chart_bars(paste0(HABITATS[h], " (% of the cells)"), SHORT, share)
     m$chart(HABITATS[h], sum(share >= 1), chart = "Species in the habitats")
-    m$draw_rect(W + 2, ty - 1.6, 1.8, 1.8, HABITAT_COLORS[h], NULL)
-    m$draw_text(W + 5, ty, HABITATS[h], "#111111", 2.2)
-    m$draw_text(W + 5, ty + 2.5, paste("Fits:", m$fit_names[h]), "#2e6b3a", 1.9)
-    m$draw_text(W + 5, ty + 4.8, paste("Now:", names_of(share, 1, 3, TRUE)), "#444444", 1.9)
-    ty <- ty + 8.3
+    square(W + 2, ty - 2.2, 2.4, HABITAT_COLORS[h])
+    text(W + 5.6, ty, HABITATS[h], "#111111", 2.8)
+    text(W + 5.6, ty + 2.8, paste("Fits:", m$fit_names[h]), "#2e6b3a", 2.2)
+    text(W + 5.6, ty + 5.4, paste("Now:", names_of(share, 1, 3, TRUE)), "#444444", 2.2)
+    ty <- ty + 9.2
   }
-  ty <- ty + 1
-  m$draw_text(W + 2, ty, "Species", "#111111", 2.4)
-  ty <- ty + 3.4
+  ty <- ty + 0.8
+  text(W + 2, ty, "Species", "#111111", 3.0)
+  ty <- ty + 3.6
   for (s in 1:NS) {
-    lx <- W + 2 + ((s - 1) %% 2) * 23; ly <- ty + ((s - 1) %/% 2) * 3
-    m$draw_rect(lx, ly - 1.6, 1.8, 1.8, SPECIES_COLORS[s], NULL)
-    m$draw_text(lx + 2.6, ly, SHORT[s], "#222222", 2)
+    lx <- W + 2 + ((s - 1) %% 3) * 25.5; ly <- ty + ((s - 1) %/% 3) * 3.2
+    square(lx, ly - 2, 2.2, SPECIES_COLORS[s])
+    text(lx + 3, ly, SHORT[s], "#222222", 2.5)
   }
 }
 
 m$init <- function(m) {
-  m$size(W + PW, H)
+  m$size((W + PW) * K, H * K)
   m$wrap <- FALSE
   do.call(m$palette, as.list(c("#e3eadf", "#f3efcf", "#dceee8", "#eadfe6", "#efe5d6", "#d8e6ef", SPECIES_COLORS, "#ffffff", HABITAT_COLORS)))
   # the habitats: patches around random centers (each habitat at least twice), the borders with noise

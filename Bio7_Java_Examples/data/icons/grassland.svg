@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The perspective icon of the grassland examples (2D): a map frame with a grass tuft and heather -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <rect x="1" y="1.5" width="14" height="13" rx="1.6" fill="none" stroke="#638d43" stroke-width="1.6"/>
+  <g fill="none" stroke="#638d43" stroke-width="1.3" stroke-linecap="round">
+    <path d="M6.2 12.6 C6 10 4.6 8.2 3.4 7.2"/>
+    <path d="M6.8 12.6 C7 9.6 6.8 7 6.6 5"/>
+    <path d="M7.4 12.6 C8 10.4 9 9 10 8.4"/>
+  </g>
+  <circle cx="11.2" cy="5.2" r="1.3" fill="#b03a8a"/>
+  <circle cx="12.4" cy="7.6" r="1.1" fill="#b03a8a"/>
+  <circle cx="10.6" cy="10.6" r="1.1" fill="#b03a8a"/>
+</svg>

@@ -19,7 +19,7 @@ import com.eco.bio7.spatial.SpatialPicking;
 import com.eco.bio7.spatial.SpatialUtil;
 
 
-class Model extends com.eco.bio7.compile.Model {
+class Models extends com.eco.bio7.compile.Model {
 
 	def year = 0.1f, year2 = 0.1f, day = 0.1f, hour = 0.1f;
     /*A setup method to start the animation loop and set the fullscreen!*/
@@ -64,7 +64,7 @@ class Model extends com.eco.bio7.compile.Model {
 
 }
 
-def m=new Model();//Instantiate the Model class!
+def m=new Models();//Instantiate the Model class!
 Compiled.setModel(m);//Assign the Object!
 m.setup();//Call the setup method!
 

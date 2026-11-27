@@ -24,8 +24,10 @@ import com.eco.bio7.simulation.Param;
  * plant and the displacement of a weaker neighbor (the competition: the height
  * of the species). Without disturbance the strongest competitor of a habitat
  * takes over (competitive exclusion); disturbance (gaps by windthrow, game or
- * floods) keeps weaker species in the habitat. The panel beside the map
- * summarizes each habitat: the species which fit it by their indicator values
+ * floods) keeps weaker species in the habitat. Each plant is a filled oval in
+ * the color of its species on the (pale) color of its habitat. The panel beside the map (an
+ * ImageJ overlay: sharp at each zoom) summarizes each habitat: the species which
+ * fit it by their indicator values
  * (the mean suitability at least 0.5: they can settle) and the species which
  * grow there now (the share of its cells, also in the bar charts). The setting
  * View shows the habitats.
@@ -36,8 +38,26 @@ import com.eco.bio7.simulation.Param;
  */
 public class PlantHabitats extends GridModel {
 
-	/* The landscape W x H, the panel of the summary beside it (PW cells) */
-	static final int W = 120, H = 80, PW = 48, NH = 6, NS = 12, X = -1;
+	/*
+	 * The landscape W x H, the panel of the summary beside it (PW cells)
+	 */
+	static final int W = 120, H = 80, PW = 79, NH = 6, NS = 12, X = -1;
+
+	/*
+	 * The display: each cell of the landscape is K x K cells of the image - the
+	 * color of the habitat with a filled oval of the species (diameter 5 of 7, a
+	 * border of the habitat between neighbors)
+	 */
+	static final int K = 7;
+	static final boolean[] DOT = new boolean[K * K];
+	static {
+		double c = (K - 1) / 2.0;
+		for (int dy = 0; dy < K; dy++) {
+			for (int dx = 0; dx < K; dx++) {
+				DOT[dy * K + dx] = (dx - c) * (dx - c) + (dy - c) * (dy - c) <= 2.5 * 2.5;
+			}
+		}
+	}
 	static final String[] HABITATS = { "Beech forest", "Calcareous grassland", "Wet meadow", "Raised bog", "Ruderal margin", "River bank" };
 	/* The site factors of the habitats: L, F, R, N */
 	static final double[][] SITE = { { 3, 5, 6, 5 }, { 8, 3, 8, 3 }, { 7, 8, 6, 5 }, { 8, 9, 1, 1 }, { 7, 5, 7, 8 }, { 7, 10, 7, 7 } };
@@ -85,7 +105,7 @@ public class PlantHabitats extends GridModel {
 	String[] fits;
 
 	public void init() {
-		size(W + PW, H);
+		size((W + PW) * K, H * K);
 		wrap = false;
 		/* The colors: the habitats under the plants (pale), the species, the panel (white), the habitats (view Habitats) */
 		palette("#e3eadf", "#f3efcf", "#dceee8", "#eadfe6", "#efe5d6", "#d8e6ef", "#2f5d34", "#9fd36a", "#5fae5a", "#c9b458", "#7a5cc0", "#f2c230", "#b9a3d9",
@@ -284,24 +304,29 @@ public class PlantHabitats extends GridModel {
 		double[][] cover = new double[NH][NS];
 		double[] cellsOf = new double[NH];
 		boolean habitats = view.equals("Habitats");
-		for (int y = 0; y < H; y++) {
-			for (int x = 0; x < W + PW; x++) {
-				cells[y * (W + PW) + x] = NH + NS;
-			}
-		}
+		/* The map: the habitat (pale) of each cell with an oval of its species, or the habitats (view Habitats) */
+		int dw = (W + PW) * K;
+		java.util.Arrays.fill(cells, NH + NS);
 		for (int y = 0; y < H; y++) {
 			for (int x = 0; x < W; x++) {
 				int i = y * W + x, h = habitat[i], s = species[i];
-				cells[y * (W + PW) + x] = habitats ? NH + NS + 1 + h : s < 0 ? h : NH + s;
+				int ground = habitats ? NH + NS + 1 + h : h;
+				for (int dy = 0; dy < K; dy++) {
+					int row = (y * K + dy) * dw + x * K;
+					for (int dx = 0; dx < K; dx++) {
+						cells[row + dx] = !habitats && s >= 0 && DOT[dy * K + dx] ? NH + s : ground;
+					}
+				}
 				cellsOf[h]++;
 				if (s >= 0) {
 					cover[h][s]++;
 				}
 			}
 		}
-		double ty = 3;
-		drawText(W + 2, ty, "Settled species (% of the cells)", "#111111", 2.4);
-		ty += 4;
+		/* The panel as an ImageJ overlay (sharp at each zoom, Image > Overlay > Hide Overlay hides it) */
+		double ty = 3.6;
+		text(W + 2, ty, "Settled species (% of the cells)", "#111111", 3.0);
+		ty += 4.6;
 		for (int h = 0; h < NH; h++) {
 			double[] share = new double[NS];
 			int settled = 0;
@@ -314,20 +339,29 @@ public class PlantHabitats extends GridModel {
 			chartBars(HABITATS[h] + " (% of the cells)", SHORT, share);
 			chart("Species in the habitats", HABITATS[h], settled);
 			/* The panel: the habitat and its three most common species */
-			drawRect(W + 2, ty - 1.6, 1.8, 1.8, HABITAT_COLORS[h], null);
-			drawText(W + 5, ty, HABITATS[h], "#111111", 2.2);
-			drawText(W + 5, ty + 2.5, "Fits: " + fits[h], "#2e6b3a", 1.9);
-			drawText(W + 5, ty + 4.8, "Now: " + names(share, 1, 3, true), "#444444", 1.9);
-			ty += 8.3;
+			square(W + 2, ty - 2.2, 2.4, HABITAT_COLORS[h]);
+			text(W + 5.6, ty, HABITATS[h], "#111111", 2.8);
+			text(W + 5.6, ty + 2.8, "Fits: " + fits[h], "#2e6b3a", 2.2);
+			text(W + 5.6, ty + 5.4, "Now: " + names(share, 1, 3, true), "#444444", 2.2);
+			ty += 9.2;
 		}
-		ty += 1;
-		drawText(W + 2, ty, "Species", "#111111", 2.4);
-		ty += 3.4;
+		ty += 0.8;
+		text(W + 2, ty, "Species", "#111111", 3.0);
+		ty += 3.6;
 		for (int s = 0; s < NS; s++) {
-			double lx = W + 2 + (s % 2) * 23, ly = ty + (s / 2) * 3;
-			drawRect(lx, ly - 1.6, 1.8, 1.8, SPECIES_COLORS[s], null);
-			drawText(lx + 2.6, ly, SHORT[s], "#222222", 2);
+			double lx = W + 2 + (s % 3) * 25.5, ly = ty + (s / 3) * 3.2;
+			square(lx, ly - 2, 2.2, SPECIES_COLORS[s]);
+			text(lx + 3, ly, SHORT[s], "#222222", 2.5);
 		}
+	}
+
+	/* A text and a square of the panel (in the cells of the landscape) as an ImageJ overlay */
+	void text(double x, double y, String text, String color, double size) {
+		drawTextOverlay(K * x, K * y, text, color, K * size);
+	}
+
+	void square(double x, double y, double size, String color) {
+		drawRectOverlay(K * x, K * y, K * size, K * size, color, null);
 	}
 
 	static final String[] HABITAT_COLORS = { "#2e6b3a", "#d9c46a", "#7fc6a4", "#b6789a", "#c98a4b", "#5b8fc9" };
@@ -349,7 +383,7 @@ public class PlantHabitats extends GridModel {
 				break;
 			}
 			used[best] = true;
-			text += (text.equals("") ? "" : ", ") + SHORT[best] + (percent ? " " + (int) Math.round(value[best]) + " %" : "");
+			text += (text.equals("") ? "" : ", ") + SHORT[best] + (percent ? " " + (int) Math.round(value[best]) + "%" : "");
 		}
 		return text.equals("") ? "none" : text;
 	}

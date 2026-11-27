@@ -16,7 +16,10 @@ neighbor. Each year all seeds and shoots are collected; the first one which arri
 lottery) may establish there. Without disturbance the strongest competitor of a habitat takes
 over (competitive exclusion); disturbance (gaps) keeps weaker species in the habitat. The panel
 beside the map summarizes each habitat: the species which fit it by their indicator values (the
-mean suitability at least 0.5: they can settle) and the species which grow there now.
+mean suitability at least 0.5: they can settle) and the species which grow there now. Each plant is
+a filled oval in the color of its species on the (pale) color of its habitat. The texts
+of the panel are an ImageJ overlay (draw_text(..., overlay=True)): sharp at each zoom, Image >
+Overlay > Hide Overlay hides them (in the exported web page they are drawn as usual).
 
 The indicator values after Ellenberg et al. (Zeigerwerte von Pflanzen in Mitteleuropa, Scripta
 Geobotanica 18) as commonly cited; check them against the original tables before a scientific use.
@@ -24,7 +27,12 @@ Geobotanica 18) as commonly cited; check them against the original tables before
 import numpy as np
 from bio7sim import GridModel, param, action, simulation, noise, fractal_noise, cos_deg, sin_deg
 
-W, H, PW = 120, 80, 48
+W, H, PW = 120, 80, 79
+# The display: each cell of the landscape is K x K cells of the image - the color of the habitat with a
+# filled oval of the species (diameter 5 of 7, a border of the habitat between neighbors)
+K = 7
+_dy, _dx = np.mgrid[0:K, 0:K] - (K - 1) / 2
+DOT = (_dx * _dx + _dy * _dy) <= 2.5 * 2.5
 HABITATS = ["Beech forest", "Calcareous grassland", "Wet meadow", "Raised bog", "Ruderal margin", "River bank"]
 SITE = np.array([[3, 5, 6, 5], [8, 3, 8, 3], [7, 8, 6, 5], [8, 9, 1, 1], [7, 5, 7, 8], [7, 10, 7, 7]], dtype=float)  # L, F, R, N
 SHORT = ["Beech", "Wood sorrel", "Woodruff", "Upright brome", "Meadow clary", "Marsh marigold", "Meadowsweet", "Sundew", "Heather",
@@ -60,7 +68,7 @@ class PlantHabitats(GridModel):
     view = param("Species", options=["Species", "Habitats"], label="View", group="Landscape")
 
     def init(self):
-        self.size(W + PW, H)
+        self.size((W + PW) * K, H * K)
         self.wrap = False
         self.palette(*(["#e3eadf", "#f3efcf", "#dceee8", "#eadfe6", "#efe5d6", "#d8e6ef"] + SPECIES_COLORS + ["#ffffff"] + HABITAT_COLORS))
         # the habitats: patches around random centers (each habitat at least twice), the borders with noise
@@ -176,32 +184,46 @@ class PlantHabitats(GridModel):
         self.show()
 
     def show(self):
-        grid = np.full((H, W + PW), NH + NS)
-        land = np.where(self.species < 0, self.habitat, NH + self.species)
+        # the map: the habitat (pale) of each cell with an oval of its species, or the habitats (view Habitats)
+        habitat = self.habitat.reshape(H, W)
         if self.view == "Habitats":
-            land = NH + NS + 1 + self.habitat
-        grid[:, :W] = land.reshape(H, W)
+            land = np.kron(NH + NS + 1 + habitat, np.ones((K, K), dtype=int))
+        else:
+            land = np.kron(habitat, np.ones((K, K), dtype=int))
+            species = np.kron(self.species.reshape(H, W), np.ones((K, K), dtype=int))
+            dot = np.tile(DOT, (H, W)) & (species >= 0)
+            land[dot] = NH + species[dot]
+        grid = np.full((H * K, (W + PW) * K), NH + NS)
+        grid[:, :W * K] = land
         self.cells = grid.astype(np.int32)
-        ty = 3.0
-        self.draw_text(W + 2, ty, "Settled species (% of the cells)", "#111111", 2.4)
-        ty += 4
+
+        # the panel as an ImageJ overlay (sharp at each zoom), in the cells of the landscape
+        def text(x, y, t, color, size):
+            self.draw_text(K * x, K * y, t, color, K * size, overlay=True)
+
+        def square(x, y, size, color):
+            self.draw_rect(K * x, K * y, K * size, K * size, color, None, overlay=True)
+
+        ty = 3.6
+        text(W + 2, ty, "Settled species (% of the cells)", "#111111", 3.0)
+        ty += 4.6
         for h in range(NH):
             inh = self.habitat == h
             share = 100 * np.array([np.sum(inh & (self.species == s)) for s in range(NS)]) / max(1, inh.sum())
             self.chart_bars(HABITATS[h] + " (% of the cells)", SHORT, [float(v) for v in share])
             self.chart(HABITATS[h], int(np.sum(share >= 1)), chart="Species in the habitats")
-            self.draw_rect(W + 2, ty - 1.6, 1.8, 1.8, HABITAT_COLORS[h], None)
-            self.draw_text(W + 5, ty, HABITATS[h], "#111111", 2.2)
-            self.draw_text(W + 5, ty + 2.5, "Fits: " + self.fit_names[h], "#2e6b3a", 1.9)
-            self.draw_text(W + 5, ty + 4.8, "Now: " + names(share, 1, 3, True), "#444444", 1.9)
-            ty += 8.3
-        ty += 1
-        self.draw_text(W + 2, ty, "Species", "#111111", 2.4)
-        ty += 3.4
+            square(W + 2, ty - 2.2, 2.4, HABITAT_COLORS[h])
+            text(W + 5.6, ty, HABITATS[h], "#111111", 2.8)
+            text(W + 5.6, ty + 2.8, "Fits: " + self.fit_names[h], "#2e6b3a", 2.2)
+            text(W + 5.6, ty + 5.4, "Now: " + names(share, 1, 3, True), "#444444", 2.2)
+            ty += 9.2
+        ty += 0.8
+        text(W + 2, ty, "Species", "#111111", 3.0)
+        ty += 3.6
         for s in range(NS):
-            lx, ly = W + 2 + (s % 2) * 23, ty + (s // 2) * 3
-            self.draw_rect(lx, ly - 1.6, 1.8, 1.8, SPECIES_COLORS[s], None)
-            self.draw_text(lx + 2.6, ly, SHORT[s], "#222222", 2)
+            lx, ly = W + 2 + (s % 3) * 25.5, ty + (s // 3) * 3.2
+            square(lx, ly - 2, 2.2, SPECIES_COLORS[s])
+            text(lx + 3, ly, SHORT[s], "#222222", 2.5)
 
     @action("Sow all species everywhere", group="Species")
     def sow_all(self):
@@ -211,9 +233,9 @@ class PlantHabitats(GridModel):
 
 
 def names(value, minimum, count, percent):
-    """The species with the largest values (at least minimum, at most count): "Reed 80 %, Nettle 5 %" or "none"."""
+    """The species with the largest values (at least minimum, at most count): "Reed 80%, Nettle 5%" or "none"."""
     order = [s for s in np.argsort(-np.asarray(value), kind="stable") if value[s] >= minimum][:count]
-    text = ", ".join(SHORT[s] + (" %d %%" % round(value[s]) if percent else "") for s in order)
+    text = ", ".join(SHORT[s] + (" %d%%" % round(value[s]) if percent else "") for s in order)
     return text or "none"
 
 
