@@ -201,13 +201,15 @@ m$step <- function(m) {
   la <- pmax(la, 1e-9)
   steer[, 1] <- steer[, 1] + rowSums(ax / la * push)
   steer[, 2] <- steer[, 2] + rowSums(ay / la * push)
-  # up from a roof just below
-  steer[, 3] <- steer[, 3] + (rowSums(below & gap < 0) > 0) * 0.05 * ms
-  # the walls and the floor
+  # up from a roof just below (the closer to the roof, the stronger: no hopping)
+  lift <- (below & gap < 0) * pmin(1, pmax(0, outer(-p[, 3], o[, 4] + 30, "+") / 30))
+  steer[, 3] <- steer[, 3] + apply(lift, 1, max) * 0.05 * ms
+  # the walls and the floor: the closer, the stronger (no sudden push, the gliders do not hop)
   margin <- 120; wall <- 0.1 * ms
-  steer[, 1] <- steer[, 1] - wall * (p[, 1] > WIDTH - margin) + wall * (p[, 1] < margin)
-  steer[, 2] <- steer[, 2] - wall * (p[, 2] > WIDTH - margin) + wall * (p[, 2] < margin)
-  steer[, 3] <- steer[, 3] - wall * (p[, 3] > TOP - margin) + wall * (p[, 3] < FLOOR_Z + 40)
+  near <- function(distance, width) pmin(1, pmax(0, 1 - distance / width))
+  steer[, 1] <- steer[, 1] + wall * (near(p[, 1], margin) - near(WIDTH - p[, 1], margin))
+  steer[, 2] <- steer[, 2] + wall * (near(p[, 2], margin) - near(WIDTH - p[, 2], margin))
+  steer[, 3] <- steer[, 3] + wall * (near(p[, 3] - FLOOR_Z, 80) - near(TOP - p[, 3], margin))
   v <- v + steer
   speed <- sqrt(rowSums(v^2))
   v <- v * ifelse(speed > ms, ms / speed, ifelse(speed < ms / 2, ms / 2 / pmax(speed, 1e-9), 1))

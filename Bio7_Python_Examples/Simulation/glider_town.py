@@ -146,13 +146,18 @@ class GliderTown(AgentModel):
         below = p[:, None, 2] < o[None, :, 3] + 30
         push = np.where(below & (gap < AVOID), ms * 0.25 * (1 - np.maximum(gap, 0) / AVOID), 0.0)
         steer[:, :2] += (ahead / np.maximum(np.linalg.norm(ahead, axis=2), 1e-9)[:, :, None] * push[:, :, None]).sum(axis=1)
-        # up from a roof just below
-        steer[:, 2] += (below & (gap < 0)).any(axis=1) * 0.05 * ms
-        # the walls and the floor
+        # up from a roof just below (the closer to the roof, the stronger: no hopping)
+        lift = np.where(below & (gap < 0), np.clip((o[None, :, 3] + 30 - p[:, None, 2]) / 30, 0, 1), 0.0)
+        steer[:, 2] += lift.max(axis=1) * 0.05 * ms
+        # the walls and the floor: the closer, the stronger (no sudden push, the gliders do not hop)
         margin, wall = 120.0, 0.1 * ms
-        steer[:, 0] -= wall * (p[:, 0] > WIDTH - margin) - wall * (p[:, 0] < margin)
-        steer[:, 1] -= wall * (p[:, 1] > WIDTH - margin) - wall * (p[:, 1] < margin)
-        steer[:, 2] -= wall * (p[:, 2] > TOP - margin) - wall * (p[:, 2] < FLOOR_Z + 40)
+
+        def near(distance, width):
+            return np.clip(1 - distance / width, 0, 1)
+
+        steer[:, 0] += wall * (near(p[:, 0], margin) - near(WIDTH - p[:, 0], margin))
+        steer[:, 1] += wall * (near(p[:, 1], margin) - near(WIDTH - p[:, 1], margin))
+        steer[:, 2] += wall * (near(p[:, 2] - FLOOR_Z, 80) - near(TOP - p[:, 2], margin))
         v = v + steer
         speed = np.linalg.norm(v, axis=1)[:, None]
         v = v * np.where(speed > ms, ms / speed, np.where(speed < ms / 2, ms / 2 / np.maximum(speed, 1e-9), 1.0))

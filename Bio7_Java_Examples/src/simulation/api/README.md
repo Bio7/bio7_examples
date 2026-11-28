@@ -5,6 +5,7 @@ Each example of this folder uses all methods of one class of the package `com.ec
 | Example | Class | Display in Bio7 |
 |---|---|---|
 | [ApiBasics](ApiBasics.java) | `Simulation` (the methods of all models), `@Param`, `@Action` | ImageJ |
+| [ApiMath](ApiMath.java) | The mathematical functions of `Simulation`: basic functions, statistics, distributions, linear algebra, `rk4`, angles and noise, and the class `Math` of Java (a moving surface, statistics, a histogram, a phase plane, the logistic growth) | ImageJ and the Charts view |
 | [ApiGrid](ApiGrid.java) | `GridModel`: cells with integer states | ImageJ |
 | [ApiValueGrid](ApiValueGrid.java) | `ValueGridModel`: cells with double values | ImageJ |
 | [ApiAgents](ApiAgents.java) | `AgentModel`, `Agent`: agents in a 3D box | 3D view |

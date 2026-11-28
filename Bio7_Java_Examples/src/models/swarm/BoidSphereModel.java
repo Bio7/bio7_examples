@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.*;
 import com.eco.bio7.collection.CustomView;
 import com.eco.bio7.collection.Work;
 import com.eco.bio7.spatial.SpatialCamera;
+import com.eco.bio7.spatial.SpatialStructure;
 import com.eco.bio7.spatial.SpatialUtil;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
@@ -250,12 +251,20 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 		});
 	}
 
-	public void run(GL2 gl, GLU glu, GLUT glut) {
-		gl.glEnable(GL_COLOR_MATERIAL);
-		/* Both sides of the wings lit (a glider is open, not a closed body) */
-		gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
-		gl.glEnable(GL2.GL_NORMALIZE);
+	/*
+	 * One time step of the flock and the camera: once per frame, before the cameras
+	 * of the frame are set (SpatialStructure.beforeFrame). The views of the frame
+	 * (both views of the split view) show the same step, the camera behind the
+	 * boid belongs to this step (set in run(), the camera would apply to the next
+	 * view: the boid would shake in the camera).
+	 */
+	private final Runnable frameStart = this::frameStart;
 
+	private void frameStart() {
+		SpatialStructure structure = SpatialStructure.getSpatialStructureInstance();
+		if (com.eco.bio7.methods.Compiled.getModel() != this || structure == null || !structure.isFromOpenGl()) {
+			return;
+		}
 		/* The number of boids of the settings (the first boid, the one of the camera, stays) */
 		while (boids.size() < boidCount) {
 			boids.add(randomBoid());
@@ -268,11 +277,34 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 			newObstacles = false;
 			obstacles = makeObstacles();
 		}
+		/* One time step of the flock (all boids decide, then all move) */
+		Flock.step(boids, maxSpeed, maxForce, separationWeight, alignmentWeight, cohesionWeight, flightHalf(), flightTop(), obstacles);
+
+		// Camera tracking logic for the lead boid
+		if (!boids.isEmpty()) {
+			Boid target = boids.get(0);
+			/* Behind the glider in its smoothed direction (the camera does not jitter) */
+			double speed = Math.max(1e-9, Math.hypot(target.dirX, target.dirY));
+			double dx = target.dirX / speed;
+			double dy = target.dirY / speed;
+
+			// Set camera using dynamic distance from GUI
+			SpatialCamera.setCustomCamera(target.x - (dx * camDist), target.z + 10.0, target.y - (dy * camDist),
+					target.x, target.z, target.y);
+		}
+	}
+
+	public void run(GL2 gl, GLU glu, GLUT glut) {
+		/* The step and the camera before each frame (frameStart) */
+		SpatialStructure.beforeFrame = frameStart;
+		gl.glEnable(GL_COLOR_MATERIAL);
+		/* Both sides of the wings lit (a glider is open, not a closed body) */
+		gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
+		gl.glEnable(GL2.GL_NORMALIZE);
 		/* The floor with the shadows of the boids (below them), the obstacles */
 		drawFloor(gl);
 		drawObstacles(gl, glu);
-		/* One time step of the flock (all boids decide, then all move), then the gliders */
-		Flock.step(boids, maxSpeed, maxForce, separationWeight, alignmentWeight, cohesionWeight, flightHalf(), flightTop(), obstacles);
+		/* The gliders (drawn in each view of the frame: the same step) */
 		for (int i = 0; i < boids.size(); i++) {
 			/* The boid of the camera (the first one) is red: visible in the global view */
 			boids.get(i).render(gl, radius, i == 0 ? RED : null);
@@ -281,18 +313,6 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 		if (isMouseDoubleClicked()) {
 			boids.add(new Boid(0, 0, (Flock.FLOOR_Z + flightTop()) / 2, maxSpeed));
 			boidCount = boids.size();
-		}
-
-		// Camera tracking logic for the lead boid
-		if (!boids.isEmpty()) {
-			Boid target = boids.get(0);
-			double speed = Math.max(1e-9, Math.sqrt(target.vx * target.vx + target.vy * target.vy));
-			double dx = target.vx / speed;
-			double dy = target.vy / speed;
-
-			// Set camera using dynamic distance from GUI
-			SpatialCamera.setCustomCamera(target.x - (dx * camDist), target.z + 10.0, target.y - (dy * camDist),
-					target.x, target.z, target.y);
 		}
 	}
 
@@ -438,6 +458,7 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 				b.x = Math.max(-HALF - out, Math.min(HALF + out, b.x + b.vx));
 				b.y = Math.max(-HALF - out, Math.min(HALF + out, b.y + b.vy));
 				b.z = Math.max(FLOOR_Z * 0.5, Math.min(TOP_Z + out, b.z + b.vz));
+				b.smoothDirection();
 			}
 		}
 
@@ -456,8 +477,10 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 
 	static final class Boid {
 		double x, y, z, vx, vy, vz;
-		/* The heading of the last frame and the bank (the roll into a turn, degrees) */
+		/* The heading of the last step and the bank (the roll into a turn, degrees) */
 		double lastYaw = Double.NaN, bank;
+		/* The direction of the glider (a unit vector): the velocity smoothed over the steps */
+		double dirX = 1, dirY, dirZ;
 		/* Each boid a shade of blue-cyan */
 		final float[] color;
 
@@ -474,16 +497,36 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 			this.vx = Math.cos(angle) * Math.cos(climb) * speed;
 			this.vy = Math.sin(angle) * Math.cos(climb) * speed;
 			this.vz = Math.sin(climb) * speed;
+			double len = Math.sqrt(vx * vx + vy * vy + vz * vz);
+			dirX = vx / len;
+			dirY = vy / len;
+			dirZ = vz / len;
 		}
 
-		/* Draws the glider; color: its color, null: the color of the boid */
-		void render(GL2 gl, float radius, float[] highlight) {
-			float[] color = highlight != null ? highlight : this.color;
-			/* The direction of the flight (y inverted as the position) */
-			double dx = vx, dy = -vy, dz = vz;
-			double yaw = Math.toDegrees(Math.atan2(dy, dx));
-			double pitch = Math.toDegrees(Math.atan2(dz, Math.hypot(dx, dy)));
-			/* Banking: the glider rolls into a turn (smoothed) */
+		/*
+		 * The direction smoothed over the steps (half the old direction, half the new
+		 * velocity): the gliders do not jitter (climb, dive, turn) with the small
+		 * changes of the velocity in each step
+		 */
+		void smoothDirection() {
+			double v = Math.sqrt(vx * vx + vy * vy + vz * vz);
+			if (v <= 0) {
+				return;
+			}
+			double nx = 0.5 * dirX + 0.5 * vx / v, ny = 0.5 * dirY + 0.5 * vy / v, nz = 0.5 * dirZ + 0.5 * vz / v;
+			double len = Math.sqrt(nx * nx + ny * ny + nz * nz);
+			if (len < 1e-3) {
+				/* A reversal (opposite directions): the new direction */
+				nx = vx;
+				ny = vy;
+				nz = vz;
+				len = v;
+			}
+			dirX = nx / len;
+			dirY = ny / len;
+			dirZ = nz / len;
+			/* Banking: the glider rolls into a turn (smoothed; y inverted as the position) */
+			double yaw = Math.toDegrees(Math.atan2(-dirY, dirX));
 			if (!Double.isNaN(lastYaw)) {
 				double turn = yaw - lastYaw;
 				if (turn > 180) {
@@ -494,6 +537,16 @@ public class BoidSphereModel extends com.eco.bio7.compile.Model {
 				bank = 0.85 * bank + 0.15 * Math.max(-50, Math.min(50, -turn * 12));
 			}
 			lastYaw = yaw;
+		}
+
+		/* Draws the glider; color: its color, null: the color of the boid */
+		void render(GL2 gl, float radius, float[] highlight) {
+			float[] color = highlight != null ? highlight : this.color;
+			/* The direction of the flight, smoothed over the steps (y inverted as the position) */
+			double dx = dirX, dy = -dirY, dz = dirZ;
+			double yaw = Math.toDegrees(Math.atan2(dy, dx));
+			double pitch = Math.toDegrees(Math.atan2(dz, Math.hypot(dx, dy)));
+			/* The bank of the step (smoothDirection) */
 
 			gl.glPushMatrix();
 			gl.glTranslated(x, -y, z); // Bio7 Y-Inversion

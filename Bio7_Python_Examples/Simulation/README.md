@@ -25,6 +25,7 @@ Run a script with the Python editor of Bio7 (the embedded Python with numpy).
 | [network_epidemic_sensitivity.py](network_epidemic_sensitivity.py) | `experiment(design=...)`: a sensitivity analysis of network_epidemic.py with SALib (the method of Morris: 40 parameter sets, 3 runs each), the mean and the 95 % confidence interval of each set (pandas, scipy); requires SALib | the console and a plot |
 | [glider_town.py](glider_town.py) | `AgentModel`: the flock of gliders flies along a route through a small town: houses, trees (OBJ) and a church tower (STL) placed with `place_model`; office towers, streets, a balloon, route markers and labels as 3D shapes (`draw_box`, `draw_polygon3`, `draw_path3`, `draw_sphere`, `draw_point3`, `draw_text` with `z`) | 3D view (split view) and the Charts view |
 | [gliders.py](gliders.py) | `AgentModel`: a flock of gliders (triangles which climb, dive and bank), pillars as obstacles, a floor with shadows, a camera which follows a boid, the polarization of the flock | 3D view (split view) and the Charts view |
+| [math_functions.py](math_functions.py) | `ValueGridModel`: the mathematical functions of bio7sim (`clamp`, `map_range`, `noise`, `fractal_noise`, `sin_deg`, `normal_pdf`, `rk4`, `linear_regression`, ...) with numpy (`np.median`, `np.quantile`, `np.linalg`); the built-in math of Python (the module `math`, `//`, `%`, `round`): a moving surface, statistics, a histogram, a phase plane, the logistic growth | ImageJ and the Charts view |
 
 ## Settings and buttons
 
